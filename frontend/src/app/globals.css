@@ -13,6 +13,7 @@
   --color-darkColor: #151515;
   --color-lightColor: #5252bb; /* Fixed typo */
   --color-lightOrange: #fca99b;
+  --color-shop_light_grenn: "3b9c3c";  
 }
 
 @theme inline {
@@ -104,4 +105,8 @@
   body {
     @apply bg-background text-foreground font-poppins antialiased;
   }
+  .hoverEffect{
+    @apply transition-all duration-300 ease-in-out;
+  }
+
 }
