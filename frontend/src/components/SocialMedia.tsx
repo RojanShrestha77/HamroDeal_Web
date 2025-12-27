@@ -29,7 +29,7 @@ const SocialMedia = () => {
     <TooltipProvider>
       <div className="flex items-center gap-5">
         {socialLink?.map((item) => (
-          <Tooltip>
+          <Tooltip key={item?.title}>
             <TooltipTrigger>
               <Link
                 key={item?.title}
