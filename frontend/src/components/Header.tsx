@@ -7,6 +7,7 @@ import CartIcon from "./CartIcon";
 import FavouriteButton from "./FavouriteButton";
 import SignIn from "./SignIn";
 import MobileMenu from "./MobileMenu";
+import Link from "next/dist/client/link";
 
 const Header = () => {
   return (
@@ -21,7 +22,11 @@ const Header = () => {
           <SearchBar />
           <CartIcon />
           <FavouriteButton />
-          <SignIn />
+          <div>
+            <Link href="/login">
+              <button>SignIn</button>
+            </Link>
+          </div>
         </div>
       </Container>
     </header>
