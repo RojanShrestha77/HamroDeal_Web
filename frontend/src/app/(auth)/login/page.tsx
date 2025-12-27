@@ -3,6 +3,8 @@
 import React from "react";
 import Link from "next/link";
 
+//this is the page for the login page
+
 const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center">
