@@ -33,12 +33,14 @@ const Login = () => {
           </div>
 
           {/* Button */}
-          <button
-            type="submit"
-            className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition"
-          >
-            Sign In
-          </button>
+          <Link href="/dashboard">
+            <button
+              type="submit"
+              className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition"
+            >
+              Sign In
+            </button>
+          </Link>
         </form>
 
         {/* Footer */}
