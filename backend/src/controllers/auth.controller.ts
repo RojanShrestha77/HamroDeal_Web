@@ -34,11 +34,11 @@ export class AuthController {
                 return res.status(400).json({success:false, message: parsedData.error});
 
             }
-            const token = await userService.loginUser(parsedData.data);
-            return res.status(200).json({success: true, message: "LOgin Successful", token});
+            const{ token, user} = await userService.loginUser(parsedData.data);
+            return res.status(200).json({success: true, message: "LOgin Successful", data:user, token});
         } catch(error: Error | any){
             return res.status(error.statusCode || 500).json(
-                {success: false, message: error.message}
+                {success: false, message: error.message || "Internal server error"}
             )
         }
     }
