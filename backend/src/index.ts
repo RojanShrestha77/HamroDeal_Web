@@ -5,7 +5,6 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser'
 import authRoutes from './routes/auth.routes';
 
-//this is the index pageof the src
 dotenv.config();
 
 console.log(process.env.PORT);
