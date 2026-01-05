@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import { HttpError } from "../errors/http-error";
 import { JWT_SCERET } from "../configs";
 
-
+//Middlewear
 declare global {
     namespace Express {
         interface Request {
