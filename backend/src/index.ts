@@ -30,4 +30,3 @@ async function startServer(){
 
 startServer();
 
-//this is the index page of the src
