@@ -10,5 +10,5 @@ router.get("/:id", adminUserController.getOneUser);
 router.get("/", adminUserController.getAllUser);
 router.delete("/:id", adminUserController.deleteOneUser);
 router.put("/:id", adminUserController.updateOneUser);
-
+router.patch("/:id", adminUserController.approveSeller);
 export default router;
