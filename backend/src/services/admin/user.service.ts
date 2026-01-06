@@ -3,6 +3,7 @@ import { HttpError } from "../../errors/http-error";
 import { UserRepository } from "../../repositories/user.repositories";
 import jwt from "jsonwebtoken";
 import bcryptjs from "bcryptjs";
+import { IUser } from "../../models/user.model";
 let userRepository = new UserRepository;
 
 export class AdminUserService {
@@ -62,6 +63,29 @@ export class AdminUserService {
 
         }
         return updatedUser;
+    }
+
+    async approveSeller(userId: string){        
+        const user = await userRepository.getUserByID(userId);
+        if (!user) {
+            throw new HttpError(404, "User not found");
+        }
+
+        if (user.role !== "seller") {
+            throw new HttpError(400, "Only sellers can be approved");
+        }
+
+        if (user.isApproved) {
+            throw new HttpError(400, "Seller is already approved");
+        }
+
+        const approveSeller = await userRepository.updateUser(userId, {
+            isApproved: true   // ← Hardcoded here, in the service
+        } as Partial<IUser> );
+        if(!approveSeller){
+            throw new HttpError(500, "Failed to approve User");
+        }
+        return approveSeller;
     }
 
 
