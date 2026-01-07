@@ -41,4 +41,51 @@ async(req: Request, res: Response, next: NextFunction) => {
     }
 
 }
+
+export const adminMiddleware = async(
+    req: Request, res: Response, next: NextFunction
+) => {
+    try{
+        if(!req.user) {
+            throw new HttpError(401, "Unauthorized no user info");
+
+        }
+        if(req.user.role !== 'admin'){
+            throw new HttpError(403, 'Forbidden not admin');
+
+        }
+        return next();
+
+    }catch(error: Error | any) {
+        return res.status(error.statusCode || 500).json(
+            { success: false, message: error.message}
+
+        )
+    }
+}
+
+export const approvedSellerMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if(!req.user){
+            throw new HttpError(401, "unauthorized: No user info");
+        }
+
+        if( req.user.role !=="seller"){
+            throw new HttpError(403, "Forbidden Seller access required");
+
+        }
+
+        if(!req.user.isApproved){
+            throw new HttpError(403, "Your seller account is pending approval")
+
+        }
+        next();
+    } catch(error: Error | any) {
+        return res.status(error.statusCode || 500).json(
+            { success: false, message: error.message}
+
+        )
+    }
+}
+
         

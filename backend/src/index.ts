@@ -4,6 +4,8 @@ import { PORT } from './configs';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser'
 import authRoutes from './routes/auth.routes';
+import adminUserRoutes from './routes/admin/user.route'
+import sellerRoutes from './routes/seller/seller.route'
 
 dotenv.config();
 
@@ -18,6 +20,9 @@ app.get("/", (req: Request, res: Response) => {
 })
 
 app.use('/api/auth', authRoutes);
+
+app.use('/api/admin/users', adminUserRoutes);
+app.use('/api/seller', sellerRoutes);
 
 
 async function startServer(){
