@@ -104,4 +104,46 @@ export class ProductUserController {
             });
     }
     }
+
+    async deleteProduct(req: Request, res: Response){
+        try{
+            const user = req.user as IUser;
+            const {id} = req.params;
+            
+            const deletedProduct = await productUserService.deleteProduct(id, user);
+
+            return res.json({
+                success: true, message: 'Product Updated Deleted', data: deletedProduct
+            });
+
+            
+        
+
+        }catch(error: Error | any ){
+            return res.status(error.statusCode || 500).json({
+                success: true, message: error.message || 'Internal Server Error'
+
+            });
+    }
+    }
+    async searchProducts(req: Request, res: Response){
+        try{
+            const query = (req.query.q as string) || "";
+            const products = await productUserService.searchProducts(query);
+
+            return res.json({
+                success: true, data: products
+            });
+        }catch(error: Error | any){
+            return res.status(error.statusCode||500).json({
+                success: false, message: error.message || 'Internal Server Error'
+            })
+
+        }
+    }
+
+
+    
+
+  
 }
