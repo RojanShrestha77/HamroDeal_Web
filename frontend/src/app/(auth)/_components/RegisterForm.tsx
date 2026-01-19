@@ -147,7 +147,7 @@ function zodReolver(
       confirmPassword: z.ZodString;
     },
     z.core.$strip
-  >
+  >,
 ) {
   throw new Error("Function not implemented.");
 }
