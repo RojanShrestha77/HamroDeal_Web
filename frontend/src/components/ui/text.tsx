@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/lib/utils";
 import React from "react";
 
 export const Title = ({
@@ -12,7 +12,7 @@ export const Title = ({
     <h2
       className={cn(
         "text-3xl font-bold text-shop_dark_green capitalize tracking-wide font-sans",
-        className
+        className,
       )}
     >
       {children}

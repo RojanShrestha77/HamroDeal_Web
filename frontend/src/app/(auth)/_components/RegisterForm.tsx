@@ -3,54 +3,110 @@ import { registerSchema } from "@/app/schema/registerSchema";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import React from "react";
+import React, { useState, useTransition } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { handleRegister } from "@/lib/actions/auth.action";
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 const RegisterForm = () => {
   const router = useRouter();
+  const [pending, setTransition] = useTransition();
+  const [error, setError] = useState("");
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm({
+  } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
   });
 
   const onSubmit = async (data: RegisterFormData) => {
+    setError("");
     try {
-      console.log("Registration data:");
-      router.push("/");
-    } catch (error) {
-      console.error("Registration failed:", error);
+      const result = await handleRegister(data);
+      if (!result.success) {
+        throw new Error(result.message);
+      }
+      setTransition(() => {
+        router.push("/");
+      });
+    } catch (e: Error | any) {
+      setError(e.message);
     }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
-        {/* Title */}
+        {error && (
+          <div className="text-red-500 mb-4 p-3 bg-red-50 border border-red-200 rounded">
+            {error}
+          </div>
+        )}
+
         <h1 className="text-2xl font-bold text-center mb-6">Sign Up</h1>
 
-        {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Name */}
+          {/* First Name */}
           <div>
-            <label className="block text-sm font-medium mb-1">Name</label>
+            <label className="block text-sm font-medium mb-1">First Name</label>
             <input
               type="text"
-              placeholder="Enter your full name"
-              {...register("name")}
+              placeholder="Enter your first name"
+              {...register("firstname")}
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${
-                errors.name
+                errors.firstname
                   ? "border-red-500 focus:ring-red-500"
                   : "border-gray-300 focus:ring-black"
               }`}
             />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+            {errors.firstname && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.firstname.message}
+              </p>
+            )}
+          </div>
+
+          {/* Last Name */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Last Name</label>
+            <input
+              type="text"
+              placeholder="Enter your last name"
+              {...register("lastname")}
+              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${
+                errors.lastname
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-black"
+              }`}
+            />
+            {errors.lastname && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.lastname.message}
+              </p>
+            )}
+          </div>
+
+          {/* Username */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Username</label>
+            <input
+              type="text"
+              placeholder="Choose a username"
+              {...register("username")}
+              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${
+                errors.username
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-black"
+              }`}
+            />
+            {errors.username && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.username.message}
+              </p>
             )}
           </div>
 
@@ -62,7 +118,7 @@ const RegisterForm = () => {
               placeholder="Enter your email"
               {...register("email")}
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${
-                errors.name
+                errors.email
                   ? "border-red-500 focus:ring-red-500"
                   : "border-gray-300 focus:ring-black"
               }`}
@@ -82,7 +138,7 @@ const RegisterForm = () => {
               placeholder="Enter your password"
               {...register("password")}
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${
-                errors.name
+                errors.password
                   ? "border-red-500 focus:ring-red-500"
                   : "border-gray-300 focus:ring-black"
               }`}
@@ -93,7 +149,8 @@ const RegisterForm = () => {
               </p>
             )}
           </div>
-          {/* Password */}
+
+          {/* Confirm Password */}
           <div>
             <label className="block text-sm font-medium mb-1">
               Confirm Password
@@ -103,7 +160,7 @@ const RegisterForm = () => {
               placeholder="Confirm your password"
               {...register("confirmPassword")}
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${
-                errors.name
+                errors.confirmPassword
                   ? "border-red-500 focus:ring-red-500"
                   : "border-gray-300 focus:ring-black"
               }`}
@@ -121,11 +178,10 @@ const RegisterForm = () => {
             disabled={isSubmitting}
             className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition disabled:opacity-50"
           >
-            {isSubmitting ? "Registrating.." : "Sign Up"}
+            {isSubmitting ? "Registering..." : "Sign Up"}
           </button>
         </form>
 
-        {/* Footer */}
         <p className="text-sm text-center mt-4">
           Already have an account?{" "}
           <Link href="/login" className="font-medium underline">
@@ -138,16 +194,3 @@ const RegisterForm = () => {
 };
 
 export default RegisterForm;
-function zodReolver(
-  registerSchema: z.ZodObject<
-    {
-      name: z.ZodString;
-      email: z.ZodEmail;
-      password: z.ZodString;
-      confirmPassword: z.ZodString;
-    },
-    z.core.$strip
-  >,
-) {
-  throw new Error("Function not implemented.");
-}

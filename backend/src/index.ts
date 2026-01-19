@@ -18,7 +18,7 @@ const app = express ();
 // decide the list of the accepted domain
 // domain of the frontend
 let corsOptions  = {
-    origin: ["http://localhost:3000", "http:''localhost:3003"]
+    origin: ["http://localhost:3000", "http://localhost:3003"]
     // list of accepted domain
 
 }
