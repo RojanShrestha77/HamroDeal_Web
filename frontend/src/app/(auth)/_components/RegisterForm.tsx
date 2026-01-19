@@ -7,6 +7,7 @@ import React, { useState, useTransition } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { handleRegister } from "@/lib/actions/auth.action";
+import { useAuth } from "@/context/AuthContext";
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
@@ -14,6 +15,7 @@ const RegisterForm = () => {
   const router = useRouter();
   const [pending, setTransition] = useTransition();
   const [error, setError] = useState("");
+  const { checkAuth } = useAuth();
 
   const {
     register,
@@ -30,6 +32,8 @@ const RegisterForm = () => {
       if (!result.success) {
         throw new Error(result.message);
       }
+
+      await checkAuth();
       setTransition(() => {
         router.push("/login");
       });
