@@ -31,7 +31,7 @@ const RegisterForm = () => {
         throw new Error(result.message);
       }
       setTransition(() => {
-        router.push("/");
+        router.push("/login");
       });
     } catch (e: Error | any) {
       setError(e.message);
