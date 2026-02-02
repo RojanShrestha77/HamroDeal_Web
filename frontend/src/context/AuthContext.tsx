@@ -47,6 +47,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     try {
       await clearAuthCookies();
+      // Clear localStorage as well
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userRole');
       setIsAuthenticated(false);
       setUser(null);
       router.push("/login");

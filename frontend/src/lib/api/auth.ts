@@ -17,10 +17,33 @@ export const register = async (registrationData: any) => {
 
 export const login = async (loginData: any) => {
     try {
-        const response = await axios.post(API.AUTH.LOGIN, loginData);
+        const response = await axiosInstance.post(API.AUTH.LOGIN, loginData);
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message || error.message || 'Login failed');
     }
 
+}
+
+export const whoami = async () => {
+    try {
+        const response = await axios.get(API.AUTH.WHOAMI);
+        return response.data;
+
+    } catch (err: Error | any) {
+        throw  new Error(err.response?.data?.message || "Fetching User Data Failed");
+    }
+}
+
+export const updateProfile = async (profileData: any) => {
+    try {
+        const response = await axios.put(API.AUTH.UPDATEPROFILE, profileData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
+        return response.data;
+    } catch (err: Error | any) {
+        throw new Error(err.response?.data?.message || "Updating Profile Failed")
+    }
 }
