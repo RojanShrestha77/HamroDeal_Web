@@ -1,0 +1,19 @@
+import axios from "axios"
+import { API } from "../endpoints"
+import axiosInstance from "../axios";
+
+export const createUser = async (userData: any) => {
+    try {
+        const response = await axiosInstance.post(API.ADMIN.USER.CREATE, userData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+
+        });
+        return response.data 
+        } catch (error: Error | any) {
+            throw new Error(
+                error.response?.data?.message || error.message || "Create User field",
+            )
+        }
+}

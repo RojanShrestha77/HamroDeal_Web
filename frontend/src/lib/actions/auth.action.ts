@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from "next/cache";
-import { login, register, updateProfile, whoami } from "../api/auth";
+import { login, register, updateProfile, whoAmI } from "../api/auth";
 import { setAuthToken, setUserData } from "../cookies";
 // import { setAuthToken, setUserData } from "../cookie";
 
@@ -51,25 +51,22 @@ export const handleLogin = async (formData: any) => {
     }
 }
 
-export async function handleWhoami() {
-    try {
-        const result = await whoami();
-
-        if(result.success) {
-            return {
-                success: true,
-                message: "message successfull",
-                data: result.data,
-            };
-        }
-
-        return { success: false, message: result.message ?? "Login failed" };
-
-
-    } catch (err: any){
-        return {success: false, message: err.message};
+export async function handleWhoAmI() {
+  try{
+    const result = await whoAmI();
+    if(result.success){
+        return { 
+            success: true,
+            message: 'User data fetched successfully', 
+            data: result.data 
+        };
     }
+    return { success: false, message: result.message || 'Failed to fetch user data' };
+  }catch(error: Error | any){
+    return { success: false, message: error.message };
+  }
 }
+
 
 export async function handleUpdateProfile(formData: any) {
     try {
