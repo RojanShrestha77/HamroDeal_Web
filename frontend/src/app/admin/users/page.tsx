@@ -1,7 +1,14 @@
 // Empty - waiting for your implementation
+import { getAllUsersAction } from "@/lib/actions/(admin)/user-action";
 import Link from "next/link";
+import UsersTable from "./users-table";
 
-export default function Page() {
+export default async function Page() {
+  const result = await getAllUsersAction();
+
+  if (!result.success) {
+    return <div className="p-4">{result.message}</div>;
+  }
   return (
     <div>
       <Link
@@ -10,6 +17,7 @@ export default function Page() {
       >
         Create User
       </Link>
+      <UsersTable initialUsers={result.data || []} />
     </div>
   );
 }
