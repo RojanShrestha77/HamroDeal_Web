@@ -5,11 +5,17 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
+import { useState, useTransition } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { handleLogin } from "@/lib/actions/auth.action";
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
   const router = useRouter();
+  const [pending, setTransition] = useTransition();
+  const [error, setError] = useState("");
+  const { checkAuth } = useAuth();
 
   const {
     register, //connects the input to the form
@@ -20,18 +26,34 @@ export default function LoginForm() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    try {
-      console.log("Login data:", data);
+    // try {
+    //   console.log("Login data:", data);
 
-      router.push("/dashboard");
-    } catch (error) {
-      console.error("Login failed:", error);
+    //   router.push("/dashboard");
+    // } catch (error) {
+    //   console.error("Login failed:", error);
+    // }
+    setError("");
+    try {
+      const result = await handleLogin(data);
+      if (!result.success) {
+        throw new Error(result.message);
+      }
+
+      await checkAuth();
+      setTransition(() => {
+        router.push("/");
+      });
+    } catch (e: Error | any) {
+      setError(e.message);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
+        {error && <div className="text-red-500">{error}</div>}
+
         {/* Title */}
         <h1 className="text-2xl font-bold text-center mb-6">Sign In</h1>
 

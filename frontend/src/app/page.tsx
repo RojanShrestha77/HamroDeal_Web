@@ -1,8 +1,8 @@
 "use client";
 
-import Container from "@/components/Container";
-import HomePage from "@/components/Home";
-import { Button } from "@/components/ui/button";
+import Container from "@/app/components/Container";
+import HomePage from "@/app/components/Home";
+import { Button } from "@/app/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Home() {

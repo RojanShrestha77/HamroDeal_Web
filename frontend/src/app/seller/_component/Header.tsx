@@ -4,21 +4,21 @@ import React from "react";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 
-export default function Header() {
+export default function SellerHeader() {
   const { logout, user } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-black/10 dark:border-white/10">
       <nav
         className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
-        aria-label="Global"
+        aria-label="Seller Navigation"
       >
         <div className="flex h-16 items-center justify-between">
           {/* left logo and title */}
           <div className="flex items-center gap-3">
-            <Link href="/admin" className="flex items-center gap-2 group">
+            <Link href="/seller" className="flex items-center gap-2 group">
               <span className="text-base font-semibold tracking-tight group-hover:opacity-80 transition-opacity">
-                Admin panel
+                Seller Panel
               </span>
             </Link>
           </div>
@@ -26,7 +26,7 @@ export default function Header() {
           {/* right user section */}
           <div className="text-base font-semibold tracking-tight transition-opacity">
             <div className="h-6 flex items-center justify-center text-xs font-semibold">
-              {user?.email || "Admin"}
+              {user?.email || "Seller"}
             </div>
 
             <span className="text-sm font-medium sm:inline">

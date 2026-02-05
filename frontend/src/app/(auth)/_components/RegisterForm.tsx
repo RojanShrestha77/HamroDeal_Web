@@ -7,6 +7,7 @@ import React, { useState, useTransition } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { handleRegister } from "@/lib/actions/auth.action";
+import { useAuth } from "@/context/AuthContext";
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
@@ -14,6 +15,7 @@ const RegisterForm = () => {
   const router = useRouter();
   const [pending, setTransition] = useTransition();
   const [error, setError] = useState("");
+  const { checkAuth } = useAuth();
 
   const {
     register,
@@ -30,6 +32,8 @@ const RegisterForm = () => {
       if (!result.success) {
         throw new Error(result.message);
       }
+
+      await checkAuth();
       setTransition(() => {
         router.push("/login");
       });
@@ -56,16 +60,16 @@ const RegisterForm = () => {
             <input
               type="text"
               placeholder="Enter your first name"
-              {...register("firstname")}
+              {...register("firstName")}
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${
-                errors.firstname
+                errors.firstName
                   ? "border-red-500 focus:ring-red-500"
                   : "border-gray-300 focus:ring-black"
               }`}
             />
-            {errors.firstname && (
+            {errors.firstName && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.firstname.message}
+                {errors.firstName.message}
               </p>
             )}
           </div>
@@ -76,16 +80,16 @@ const RegisterForm = () => {
             <input
               type="text"
               placeholder="Enter your last name"
-              {...register("lastname")}
+              {...register("lastName")}
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${
-                errors.lastname
+                errors.lastName
                   ? "border-red-500 focus:ring-red-500"
                   : "border-gray-300 focus:ring-black"
               }`}
             />
-            {errors.lastname && (
+            {errors.lastName && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.lastname.message}
+                {errors.lastName.message}
               </p>
             )}
           </div>
