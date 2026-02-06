@@ -27,9 +27,11 @@ export default function ProductsTable({
   const [loading, setLoading] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleDelete = async (productId: string) => {
-    if (!confirm("Are you sure you want to delete this product"))
-      setLoading(productId);
+  const handleDelete = async (e: React.MouseEvent, productId: string) => {
+    e.stopPropagation();
+    const del = confirm("Are you sure you want to delete this product");
+    if (!del) return;
+    setLoading(productId);
     try {
       const result = await deleteProductAction(productId);
 
@@ -45,6 +47,15 @@ export default function ProductsTable({
     } finally {
       setLoading(null);
     }
+  };
+
+  const handleEdit = (e: React.MouseEvent, productId: string) => {
+    e.stopPropagation();
+    router.push(`/seller/products/edit/${productId}`);
+  };
+
+  const handleRowClick = (productId: string) => {
+    router.push(`/products/${productId}`);
   };
   if (products.length === 0) {
     return (
@@ -80,7 +91,11 @@ export default function ProductsTable({
         </thead>
         <tbody>
           {products.map((product) => (
-            <tr key={product._id} className="hover:bg-gray-50">
+            <tr
+              key={product._id}
+              onClick={() => handleRowClick(product._id)}
+              className="hover:bg-gray-50 cursor-pointer transition-colors"
+            >
               <td className="px-6 py-4">
                 {product.images ? (
                   <img
@@ -121,7 +136,7 @@ export default function ProductsTable({
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(product._id)}
+                  onClick={(e) => handleDelete(e, product._id)}
                   disabled={loading === product._id}
                   className="text-red-600 hover:text-red-800 disabled:opacity-50"
                 >
