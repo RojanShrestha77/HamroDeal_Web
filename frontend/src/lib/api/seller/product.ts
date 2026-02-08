@@ -36,7 +36,11 @@ export const getMyProducts = async () => {
 
 export const updateProducts = async (id: string, data: any) => {
     try {
-        const response = await axiosInstance.patch(API.PRODUCT.UPDATE(id), data);
+        const response = await axiosInstance.put(API.PRODUCT.UPDATE(id), data, {
+            headers : {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
         return response.data;
     } catch (err: Error | any) {
         throw new Error(

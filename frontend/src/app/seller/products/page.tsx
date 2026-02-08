@@ -1,7 +1,7 @@
 // Empty - waiting for your implementation
 import { getMyProductsAction } from "@/lib/actions/seller/product.action";
 import Link from "next/link";
-import ProductsTable from "../productsTable";
+import ProductsTable from "./productsTable";
 
 export default async function Page() {
   const result = await getMyProductsAction();

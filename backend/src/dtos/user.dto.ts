@@ -7,12 +7,14 @@ export const CreateUserDto = UserSchema.pick({
     username: true,
     email: true,
     password: true,
+    imageUrl: true,
 
 
 }
 ).extend(
     {
-        confirmPassword: z.string().min(6)
+        confirmPassword: z.string().min(6),
+        // imageUrl: false
     }
 ).refine(
     (data) => data.password == data.confirmPassword,
@@ -24,17 +26,17 @@ export const CreateUserDto = UserSchema.pick({
 
 export type CreateUserDto = z.infer<typeof CreateUserDto>;
 
-export const UpdatedUserDto = UserSchema.pick(
-    {
-        firstName: true,
-        lastName: true,
-        username: true,
-        email: true,
-    }
+// export const UpdatedUserDto = UserSchema.pick(
+//     {
+//         firstName: true,
+//         lastName: true,
+//         username: true,
+//         email: true,
+//     }
 
-)
+// )
 
-export type UpdatedUserDto = z.infer<typeof UpdatedUserDto>
+// export type UpdatedUserDto = z.infer<typeof UpdatedUserDto>
 
 export const LoginUserDto = z.object({
     email: z.email(),
@@ -42,3 +44,6 @@ export const LoginUserDto = z.object({
 })
 
 export type LoginUserDto = z.infer<typeof LoginUserDto>;
+
+export const UpdateUserDto = UserSchema.partial();
+export type UpdateUserDto = z.infer<typeof UpdateUserDto>;

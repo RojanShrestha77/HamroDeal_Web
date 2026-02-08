@@ -11,3 +11,14 @@ export const getOneProduct = async (productId: string) => {
         )
     }
 }
+
+export const getAllProduct = async () => {
+    try {
+        const response = await axiosInstance.get(API.PRODUCT.GET_MY);
+        return response.data;
+    } catch (err: Error | any) {
+        throw new Error(
+            err.response?.data?.message || err.message || 'Failed to get products'
+        )
+    }
+}

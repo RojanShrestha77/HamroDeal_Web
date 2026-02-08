@@ -1,4 +1,4 @@
-import { getOneProduct } from "@/lib/api/product/product";
+import { getAllProduct, getOneProduct } from "@/lib/api/product/product";
 
 export async function getOneProductAction(productId: string) {
     try {
@@ -10,6 +10,21 @@ export async function getOneProductAction(productId: string) {
         return { success: false, message: result.message|| 'Failed to fetch product'};
 
     } catch (error: Error | any) {
+        return { success: false, message: error.message};
+    }
+}
+
+export async function getAllProductsAction() {
+    try {
+        const result = await getAllProduct();
+
+        if(result.success) {
+            return { success: true, data: result.data};
+
+        }
+        return { success: false, message: result.message|| 'Failed to fetch products'};
+
+    }catch (error: Error | any) {
         return { success: false, message: error.message};
     }
 }

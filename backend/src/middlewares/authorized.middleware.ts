@@ -15,33 +15,28 @@ declare global {
 let userRepository = new UserRepository();
 
 
-
 export const authorizedMiddleware = 
 async(req: Request, res: Response, next: NextFunction) => {
     try{
         const authHeader = req.headers.authorization;
-        if(!authHeader || authHeader.startsWith('Bearer'))
+        if(!authHeader || !authHeader.startsWith('Bearer'))  // ✅ Added !
             throw new HttpError(401, 'Unauhtorized JWT Invalid');
-        const token = authHeader.split('')[1]
+        const token = authHeader.split(' ')[1]  // ✅ Changed '' to ' '
         const decodedToken = jwt.verify(token, JWT_SCERET) as Record<string, any>;
-        if(!decodedToken || decodedToken.id){
+        if(!decodedToken || !decodedToken.id){  // ✅ Also add ! here
             throw new HttpError(401, "Unauthorized JWT Unverified");
         }
         const user = await userRepository.getUserByID(decodedToken.id);
-        if(!user) throw  new HttpError(401, 'unauthorized user not found');
+        if(!user) throw new HttpError(401, 'unauthorized user not found');
         req.user = user;
         next();
-
 
     }catch(err: Error | any){
         return res.status(err.statusCode || 500).json(
             {success: false, message: err.message}
         )
-
     }
-
 }
-
 export const adminMiddleware = async(
     req: Request, res: Response, next: NextFunction
 ) => {

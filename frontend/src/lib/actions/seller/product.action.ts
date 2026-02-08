@@ -1,6 +1,6 @@
 'use server';
 
-import { createProduct, deleteProducts, getMyProducts } from "@/lib/api/seller/product";
+import { createProduct, deleteProducts, getMyProducts, updateProducts } from "@/lib/api/seller/product";
 import { revalidatePath } from "next/cache";
 
 export async function handleCreateProduct(formData: FormData) {
@@ -53,4 +53,25 @@ export async function deleteProductAction(productId: string) {
     } catch (error: Error | any) {
         return { success: false, message: error.message || 'Failed to delete product'}
     }
+}
+
+export async function handleUpdateProduct(productId: string, formData: FormData) {
+     console.log("🟢 SERVER ACTION: handleUpdateProduct called");
+    console.log("Product ID:", productId);
+    
+    // Log what's in FormData
+    console.log("FormData contents:");
+    try {
+        const result = await updateProducts(productId, formData);
+
+        if(result.success) {
+            revalidatePath("/seller/products");
+            return {success: true ,message: result.message || "Failed to update product"}
+
+
+        } 
+        return { success: false, message: result.message || 'Failed to udpate product'}
+    }catch (error: Error | any) {
+            return { success: false, message: error.message};
+        }
 }
