@@ -22,29 +22,14 @@ const ProductMongoSchema: Schema = new Schema(
       default: 0
     },
     images: {
-      type: [String],
-      required: true,
-      validate: {
-        validator: (arr: string[]) => arr.length >= 1,
-        message: "At least one image is required"
-      }
-    },
-    category: {
       type: String,
+      required: false,
+      
+    },
+    categoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref:'Category',
       required: true,
-      enum: [
-        "Electronics",
-        "Fashion",
-        "Home & Kitchen",
-        "Beauty & Personal Care",
-        "Sports & Outdoors",
-        "Books",
-        "Toys & Games",
-        "Health",
-        "Automotive",
-        "Other"
-      ],
-      default: "Other"
     },
     sellerId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -57,14 +42,14 @@ const ProductMongoSchema: Schema = new Schema(
   }
 );
 
-export interface IProduct extends Document {
+export interface IProduct extends  Document {
   _id: mongoose.Types.ObjectId;
   title: string;
   description: string;
   price: number;
   stock: number;
-  images: string[];
-  category: "Electronics" | "Fashion" | "Home & Kitchen" | "Beauty & Personal Care" | "Sports & Outdoors" | "Books" | "Toys & Games" | "Health" | "Automotive" | "Other";
+  images?: string;
+  categoryId:mongoose.Types.ObjectId;
   sellerId: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;

@@ -8,6 +8,7 @@ export const UserSchema = z.object({
     username: z.string().min(3),
     role: z.enum(["user", "admin", "seller"]).default("user"),
     isApproved: z.boolean().default(false),
+    imageUrl: z.string().optional()
 
 })
 

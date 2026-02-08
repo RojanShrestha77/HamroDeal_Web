@@ -1,4 +1,4 @@
-import { CreateUserDto, UpdatedUserDto } from "../../dtos/user.dto";
+import { CreateUserDto, UpdateUserDto } from "../../dtos/user.dto";
 import { HttpError } from "../../errors/http-error";
 import { UserRepository } from "../../repositories/user.repositories";
 import jwt from "jsonwebtoken";
@@ -52,7 +52,7 @@ export class AdminUserService {
         return result;
     }
 
-    async updateOneUser(userId: string, updateData: UpdatedUserDto){
+    async updateOneUser(userId: string, updateData: UpdateUserDto){
         const user = await userRepository.getUserByID(userId);
         if(!user){
             throw new HttpError(404, "User not Found");
@@ -65,7 +65,7 @@ export class AdminUserService {
         return updatedUser;
     }
 
-    async approveSeller(userId: string){        
+    async approvedSeller(userId: string){        
         const user = await userRepository.getUserByID(userId);
         if (!user) {
             throw new HttpError(404, "User not found");

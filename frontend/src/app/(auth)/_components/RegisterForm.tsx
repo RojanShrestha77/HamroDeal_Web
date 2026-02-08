@@ -60,16 +60,16 @@ const RegisterForm = () => {
             <input
               type="text"
               placeholder="Enter your first name"
-              {...register("firstname")}
+              {...register("firstName")}
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${
-                errors.firstname
+                errors.firstName
                   ? "border-red-500 focus:ring-red-500"
                   : "border-gray-300 focus:ring-black"
               }`}
             />
-            {errors.firstname && (
+            {errors.firstName && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.firstname.message}
+                {errors.firstName.message}
               </p>
             )}
           </div>
@@ -80,16 +80,16 @@ const RegisterForm = () => {
             <input
               type="text"
               placeholder="Enter your last name"
-              {...register("lastname")}
+              {...register("lastName")}
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${
-                errors.lastname
+                errors.lastName
                   ? "border-red-500 focus:ring-red-500"
                   : "border-gray-300 focus:ring-black"
               }`}
             />
-            {errors.lastname && (
+            {errors.lastName && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.lastname.message}
+                {errors.lastName.message}
               </p>
             )}
           </div>

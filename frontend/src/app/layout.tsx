@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google"; // or Poppins
 import "./globals.css";
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
+import Footer from "@/app/components/Footer";
+import Header from "@/app/components/Header";
 import { AuthProvider } from "@/context/AuthContext";
 
 const poppins = Inter({ subsets: ["latin"], variable: "--font-poppins" }); // Replace with Poppins if imported
@@ -21,11 +21,16 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${poppins.variable} font-poppins`}>
         <div className="flex flex-col min-h-screen">
-          <Header />
           <main>
-            <AuthProvider>{children}</AuthProvider>
+            <AuthProvider>
+              <div className="flex flex-col min-h-screen">
+                <Header />
+                <main>{children}</main>
+                <Footer />
+              </div>
+            </AuthProvider>
           </main>
-          <Footer />
+          {/* <Footer /> */}
         </div>
       </body>
     </html>

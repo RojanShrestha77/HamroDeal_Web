@@ -1,20 +1,15 @@
-"use client";
-
-import Container from "@/components/Container";
-import HomePage from "@/components/Home";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/context/AuthContext";
+import Container from "@/app/components/Container";
+import HomePage from "@/app/components/Home";
+import { Button } from "@/app/components/ui/button";
+import AuthSection from "@/app/components/AuthSection"; // ✅
 
 export default function Home() {
-  const { user, logout } = useAuth();
-
   return (
     <div className="m-0 p-0 w-full">
       <Container>
         <div>
           <HomePage />
-          {user && `Welcome, ${user.email}`}
-          {user && <button onClick={logout}>Logout</button>}
+          <AuthSection />
         </div>
         {/* <Home /> */}
       </Container>

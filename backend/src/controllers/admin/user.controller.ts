@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AdminUserService } from "../../services/admin/user.service";
-import { CreateUserDto, UpdatedUserDto } from "../../dtos/user.dto";
+import { CreateUserDto, UpdateUserDto,  } from "../../dtos/user.dto";
 import z, { success } from "zod";
 import { ca } from "zod/v4/locales";
 
@@ -9,7 +9,14 @@ let adminUserService = new AdminUserService();
 export class AdminUserController {
     async createUser(req: Request, res: Response){
         try{
-            const parsedData = CreateUserDto.safeParse(req.body);
+            const payload = { ...req.body};
+            const filename = req.file?.filename;
+
+            if(req.file) {
+                payload.imageUrl = `/uploads/${filename}`
+            }
+            // const parsedData = CreateUserDto.safeParse(req.body);
+            const parsedData = CreateUserDto.safeParse(payload);
             if(!parsedData.success){
                 return res.status(400).json(
                     {success:false, message:z.prettifyError(parsedData.error)}
@@ -21,8 +28,8 @@ export class AdminUserController {
         } catch(error : Error | any) {
             return res.status(error.statusCode || 500).json({
                 success: false, message: error.message || "Internal Server Error"
-            }
-        )
+            })
+        
 
         }
 
@@ -73,15 +80,20 @@ export class AdminUserController {
 
     async updateOneUser( req: Request, res: Response){
         try{
+            const payload = { ...req.body}
             const userId = req.params.id;
-            const parsedData = UpdatedUserDto.safeParse(req.body);
+            const filename = req.file?.filename;
+            if(filename){
+                payload.imageUrl = `/uploads/${filename}`
+            }
+            const parsedData = UpdateUserDto.safeParse(payload);
             if(!parsedData.success){
                 return res.status(400).json(
                     {success:false, message:z.prettifyError(parsedData.error)}
                 )
             }
             const updatedUser = await adminUserService.updateOneUser(userId, parsedData.data);
-            res.status(200).json({
+            return res.status(200).json({
                 success: true, message:"User has been Updated", data: updatedUser
             })
 
@@ -93,11 +105,11 @@ export class AdminUserController {
         }
     }
 
-    async approveSeller(req: Request, res: Response){
+    async approvedSeller(req: Request, res: Response){
         try {
             const userId = req.params.id;
 
-            const updatedSeller = await adminUserService.approveSeller(userId);
+            const updatedSeller = await adminUserService.approvedSeller(userId);
             res.status(200).json({
                 success: true, message: 'Seller Approved', data: updatedSeller,
             })

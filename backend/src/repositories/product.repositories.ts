@@ -7,7 +7,7 @@ export interface IProductRepository{
     updateProduct(productId: string, updateData: Partial<IProduct>): Promise<IProduct|null> 
     deleteProduct(productId: string): Promise<boolean | null>
     getAllProducts(): Promise<IProduct[]>
-    getProductsByCategory(category: string): Promise<IProduct[]>
+    getProductsByCategory(categoryId: string): Promise<IProduct[]>
     searchProducts(query: string): Promise<IProduct[]>
     getAllProductsPaginated(page: number, limit: number): Promise<IProduct[]>
 }
@@ -20,14 +20,19 @@ export class ProductRepository implements IProductRepository {
 
     }
 
-    async getProductsBySellerId(sellerId: string): Promise<IProduct[]> {
-        const product = await ProductModel.find({seller: sellerId});
-        return product;
-        
-    }
+   async getProductsBySellerId(sellerId: string): Promise<IProduct[]> {
+    const products = await ProductModel.find({ sellerId: sellerId })
+        .populate('categoryId', 'name description')
+        .populate('sellerId', 'username email');
+    return products;
+}
+
 
     async getProductById(productId: string): Promise<IProduct | null> {
-        const product = await ProductModel.findById(productId);
+        const product = await ProductModel.findById(productId)
+        .populate('categoryId', 'name description')
+        .populate('sellerId', 'username  email')
+        ;
         return product;
     }
 
@@ -46,8 +51,10 @@ export class ProductRepository implements IProductRepository {
         return products;
     }
 
-    async getProductsByCategory(category: string): Promise<IProduct[]> {
-        const products = await ProductModel.find({category})
+    async getProductsByCategory(categoryId: string): Promise<IProduct[]> {
+        const products = await ProductModel.find({categoryId})
+        .populate('categoryId','name description')
+        .populate('sellerId', 'username email')
         return products
     }
 
