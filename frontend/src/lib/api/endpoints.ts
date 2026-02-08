@@ -29,5 +29,12 @@ export const API = {
     CATEGORIES: {
         GET_ALL: '/api/categories',
         GET_ACTIVE: '/api/categories/active',
+    },
+    CART: {
+        ADD: '/api/cart',
+        GET: '/api/cart',
+        UPDATE: (productId: string) => `/api/cart/${productId}`,
+        REMOVE: (productId: string) => `/api/cart/${productId}`,
+        CLEAR: '/api/cart/clear/all',
     }
 }

@@ -4,6 +4,7 @@ import "./globals.css";
 import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
 import { AuthProvider } from "@/context/AuthContext";
+import { CartProvider } from "@/context/CartContext";
 
 const poppins = Inter({ subsets: ["latin"], variable: "--font-poppins" }); // Replace with Poppins if imported
 
@@ -23,11 +24,13 @@ export default function RootLayout({
         <div className="flex flex-col min-h-screen">
           <main>
             <AuthProvider>
-              <div className="flex flex-col min-h-screen">
-                <Header />
-                <main>{children}</main>
-                <Footer />
-              </div>
+              <CartProvider>
+                <div className="flex flex-col min-h-screen">
+                  <Header />
+                  <main>{children}</main>
+                  <Footer />
+                </div>
+              </CartProvider>
             </AuthProvider>
           </main>
           {/* <Footer /> */}
