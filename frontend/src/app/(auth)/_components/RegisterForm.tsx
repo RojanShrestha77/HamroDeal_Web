@@ -1,13 +1,13 @@
 "use client";
 import { registerSchema } from "@/app/schema/registerSchema";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import React, { useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { handleRegister } from "@/lib/actions/auth.action";
 import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 

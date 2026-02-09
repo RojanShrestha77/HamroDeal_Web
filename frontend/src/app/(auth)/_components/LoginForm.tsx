@@ -18,21 +18,14 @@ export default function LoginForm() {
   const { checkAuth } = useAuth();
 
   const {
-    register, //connects the input to the form
-    handleSubmit, //handles form submisson,Runs validation first ,only calls your submit function if validation passes
+    register,
+    handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    // try {
-    //   console.log("Login data:", data);
-
-    //   router.push("/dashboard");
-    // } catch (error) {
-    //   console.error("Login failed:", error);
-    // }
     setError("");
     try {
       const result = await handleLogin(data);
@@ -52,7 +45,11 @@ export default function LoginForm() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
-        {error && <div className="text-red-500">{error}</div>}
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-md text-sm">
+            {error}
+          </div>
+        )}
 
         {/* Title */}
         <h1 className="text-2xl font-bold text-center mb-6">Sign In</h1>
@@ -81,7 +78,9 @@ export default function LoginForm() {
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-medium mb-1">Password</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium">Password</label>
+            </div>
             <input
               type="password"
               {...register("password")}
@@ -103,19 +102,25 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition"
+            className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isSubmitting ? "Signing IN..." : "Sign In"}
+            {isSubmitting ? "Signing In..." : "Sign In"}
           </button>
         </form>
 
         {/* Footer */}
         <p className="text-sm text-center mt-4">
-          Don’t have an account?{" "}
+          Don't have an account?{" "}
           <Link href="/register" className="font-medium underline">
             Sign up
           </Link>
         </p>
+        <Link
+          href="/request-reset-password"
+          className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+        >
+          Forgot password?
+        </Link>
       </div>
     </div>
   );
