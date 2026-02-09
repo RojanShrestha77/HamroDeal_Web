@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import AddToCartButton from "../cart/_components/AddToCartButton";
+import AddToWishlistButton from "./_components/AddToWishlistButton";
 
 type Product = {
   _id: string;
@@ -96,6 +97,9 @@ export default async function ProductHomePage() {
                     : "Out of stock"}
                 </p>
               </Link>
+              <div>
+                <AddToWishlistButton productId={product._id} />
+              </div>
 
               {/* Add to Cart Button */}
               <AddToCartButton productId={product._id} stock={product.stock} />

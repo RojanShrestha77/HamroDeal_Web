@@ -17,14 +17,14 @@ export const API = {
         },
     },
     PRODUCT:{
-        CREATE: 'api/products',
-        GET_MY: 'api/products/',
-        GET_MY_PRODUCTS: 'api/products/my-products',
-        GET_ONE: (id: string) => `api/products/${id}`,
-        UPDATE: (id: string) => `api/products/${id}`,
-        DELETE: (id: string) => `api/products/${id}`,
-        BY_CATEGORY: 'api/products/category',
-        SEARCH: 'api/products/search',
+        CREATE: '/api/products',
+        GET_MY: '/api/products/',
+        GET_MY_PRODUCTS: '/api/products/my-products',
+        GET_ONE: (id: string) => `/api/products/${id}`,
+        UPDATE: (id: string) => `/api/products/${id}`,
+        DELETE: (id: string) => `/api/products/${id}`,
+        BY_CATEGORY: '/api/products/category',
+        SEARCH: '/api/products/search',
     },
     CATEGORIES: {
         GET_ALL: '/api/categories',
@@ -36,5 +36,11 @@ export const API = {
         UPDATE: (productId: string) => `/api/cart/${productId}`,
         REMOVE: (productId: string) => `/api/cart/${productId}`,
         CLEAR: '/api/cart/clear/all',
+    },
+    WISHLIST: {
+        ADD: '/api/wishlist',
+        GET: '/api/wishlist',
+        REMOVE: (productId: string) =>`/api/wishlist/${productId}`,
+        CLEAR: '/api/wishlist/clear/all',
     }
 }

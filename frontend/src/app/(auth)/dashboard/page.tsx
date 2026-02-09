@@ -1,5 +1,5 @@
 import React from "react";
-import Products from "@/app/components/Products"; // import your existing Products component
+import Products from "@/app/products/Products"; // import your existing Products component
 
 const DashboardPage = () => {
   return (

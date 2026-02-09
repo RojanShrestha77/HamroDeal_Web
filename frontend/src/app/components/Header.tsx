@@ -5,10 +5,10 @@ import Logo from "./Logo";
 import HeaderMenu from "./HeaderMenu";
 import SearchBar from "./SearchBar";
 import CartIcon from "./CartIcon";
-import FavouriteButton from "./FavouriteButton";
-import MobileMenu from "./MobileMenu";
+import FavouriteButton from "../wishlist/_components/FavouriteButton";
 import Link from "next/dist/client/link";
 import { useAuth } from "@/context/AuthContext";
+import MobileMenu from "./MobileMenu";
 
 const Header = () => {
   const { user } = useAuth();

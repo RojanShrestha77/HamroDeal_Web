@@ -5,6 +5,7 @@ import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
+import { WishlistProvider } from "@/context/WishListContext";
 
 const poppins = Inter({ subsets: ["latin"], variable: "--font-poppins" }); // Replace with Poppins if imported
 
@@ -25,11 +26,13 @@ export default function RootLayout({
           <main>
             <AuthProvider>
               <CartProvider>
-                <div className="flex flex-col min-h-screen">
-                  <Header />
-                  <main>{children}</main>
-                  <Footer />
-                </div>
+                <WishlistProvider>
+                  <div className="flex flex-col min-h-screen">
+                    <Header />
+                    <main>{children}</main>
+                    <Footer />
+                  </div>
+                </WishlistProvider>
               </CartProvider>
             </AuthProvider>
           </main>

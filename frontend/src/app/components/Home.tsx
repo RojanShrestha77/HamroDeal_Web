@@ -1,7 +1,5 @@
-import React from "react";
 import HomeBanner from "./HomeBanner";
-import Products from "./Products";
-import ProductHomePage from "./Products";
+import ProductHomePage from "../products/Products";
 
 const HomePage = () => {
   return (
