@@ -5,7 +5,7 @@ export const API = {
         WHOAMI: "/api/auth/whoami",
         UPDATEPROFILE: "/api/auth/update-profile",
         REQUEST_PASSWORD_RESET: '/api/auth/request-password-reset',
-        RESET_PASSWORD:(token: string) => `api/auth/reset-password/${token}`   
+        RESET_PASSWORD: (token: string) => `api/auth/reset-password/${token}`
 
     },
     ADMIN: {
@@ -15,10 +15,21 @@ export const API = {
             GET_ONE: (id: string) => `/api/admin/users/${id}`,
             UPDATE: (id: string) => `/api/admin/users/${id}`,
             DELETE: (id: string) => `/api/admin/users/${id}`,
-            APPROVE_SELLER: (id: string) => `/api/admin/users/${id}/approve-seller`,   
+            APPROVE_SELLER: (id: string) => `/api/admin/users/${id}/approve-seller`,
         },
+        BLOGS: {
+            GET_ALL: "/api/admin/blogs",
+            GET_ONE: (id: string) => `/api/admin/blogs/${id}`,
+            DELETE: (id: string) => `/api/admin/blogs/${id}`
+        }
     },
-    PRODUCT:{
+    BLOGS: {
+        GET_ALL: '/api/blogs',
+        GET_ONE: (id: string) => `/api/blogs/${id}`,
+        CREATE: '/api/blogs',
+        UPDATE: (id: string) => `/api/blogs/${id}`,
+    },
+    PRODUCT: {
         CREATE: '/api/products',
         GET_MY: '/api/products/',
         GET_MY_PRODUCTS: '/api/products/my-products',
@@ -42,7 +53,8 @@ export const API = {
     WISHLIST: {
         ADD: '/api/wishlist',
         GET: '/api/wishlist',
-        REMOVE: (productId: string) =>`/api/wishlist/${productId}`,
+        REMOVE: (productId: string) => `/api/wishlist/${productId}`,
         CLEAR: '/api/wishlist/clear/all',
-    }
+    },
+
 }

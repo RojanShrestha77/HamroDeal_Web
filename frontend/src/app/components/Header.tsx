@@ -20,22 +20,44 @@ const Header = () => {
           <Logo />
         </div>
         <HeaderMenu />
-        <div>
-          <Link href="/user/profile">My Profile</Link>
-        </div>
-        <div>{user?.role === "admin" && <Link href="/admin">admin</Link>}</div>
-        <div>
-          {user?.role === "seller" && <Link href="/seller">seller</Link>}
+        <div className="flex items-center gap-4">
+          {user && (
+            <>
+              <Link href="/my-blogs" className="hover:text-shop_light_green">
+                My Blogs
+              </Link>
+              <Link href="/user/profile" className="hover:text-shop_light_green">
+                My Profile
+              </Link>
+            </>
+          )}
+          {user?.role === "admin" && (
+            <>
+              <Link href="/admin" className="hover:text-shop_light_green">
+                Admin
+              </Link>
+              <Link href="/admin/blogs" className="hover:text-shop_light_green">
+                Manage Blogs
+              </Link>
+            </>
+          )}
+          {user?.role === "seller" && (
+            <Link href="/seller" className="hover:text-shop_light_green">
+              Seller
+            </Link>
+          )}
         </div>
         <div className="w-auto md:w-1/3 flex items-center justify-end gap-5">
           <SearchBar />
           <CartIcon />
           <FavouriteButton />
-          <div>
-            <Link href="/login">
-              <button>SignIn</button>
-            </Link>
-          </div>
+          {!user && (
+            <div>
+              <Link href="/login">
+                <button>SignIn</button>
+              </Link>
+            </div>
+          )}
         </div>
       </Container>
     </header>
