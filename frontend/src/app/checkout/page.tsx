@@ -22,6 +22,9 @@ export default function CheckoutPage() {
   const { cart, clearCart } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  console.log("🔍 CHECKOUT PAGE LOADED");
+  console.log("🛒 Cart:", cart);
+
   const {
     register,
     handleSubmit,
@@ -49,6 +52,10 @@ export default function CheckoutPage() {
   // Check if payment method is selected
   const isPaymentComplete = !!watchedFields.paymentMethod;
 
+  console.log("📝 Watched Fields:", watchedFields);
+  console.log("✅ Shipping Complete:", isShippingComplete);
+  console.log("✅ Payment Complete:", isPaymentComplete);
+
   const steps = [
     { number: 1, title: "Shipping", completed: isShippingComplete },
     { number: 2, title: "Payment", completed: isPaymentComplete },
@@ -57,6 +64,9 @@ export default function CheckoutPage() {
 
   const cartItems = cart?.items || [];
   const hasItems = cartItems.length > 0;
+
+  console.log("🛍️ Cart Items:", cartItems);
+  console.log("📊 Has Items:", hasItems);
 
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -67,23 +77,49 @@ export default function CheckoutPage() {
   const total = subtotal + shippingCost + tax;
 
   const onSubmit = async (data: CheckoutFormData) => {
+    console.log("🚀 FORM SUBMITTED!");
+    console.log("📋 Form Data:", data);
+    console.log("🛒 Cart Items at submit:", cartItems);
+
     if (!hasItems) {
+      console.log("❌ Cart is empty - stopping submission");
       toast.error("Your cart is empty");
       return;
     }
 
+    console.log("✅ Cart has items - proceeding...");
     setIsSubmitting(true);
 
     try {
       const orderData = {
-        items: cartItems.map((item) => ({
-          productId: item.productId,
-          productName: item.name || "Product",
-          productImage: item.image || "",
-          quantity: item.quantity,
-          price: item.price,
-          sellerId: item.sellerId || "",
-        })),
+        items: cartItems.map((item) => {
+          // Extract productId - handle both string and object formats
+          const productId = typeof item.productId === 'string' 
+            ? item.productId 
+            : (item.productId as any)._id;
+          
+          // Extract product details
+          const productDetails = typeof item.productId === 'object' 
+            ? (item.productId as any)
+            : null;
+          
+          // Extract sellerId - handle both string and object formats
+          let sellerId = item.sellerId || '';
+          if (productDetails && productDetails.sellerId) {
+            sellerId = typeof productDetails.sellerId === 'string'
+              ? productDetails.sellerId
+              : productDetails.sellerId._id;
+          }
+
+          return {
+            productId: productId,
+            productName: item.name || item.title || productDetails?.title || "Product",
+            productImage: item.image || productDetails?.images || "",
+            quantity: item.quantity,
+            price: item.price,
+            sellerId: sellerId,
+          };
+        }),
         shippingAddress: {
           fullName: data.fullName,
           phone: data.phone,
@@ -98,25 +134,42 @@ export default function CheckoutPage() {
         notes: data.notes,
       };
 
+      console.log("📦 Order Data to send:", orderData);
+      console.log("📦 Order Items detail:", JSON.stringify(orderData.items, null, 2));
+      console.log("🌐 Calling handleCreateOrder...");
+
       const response = await handleCreateOrder(orderData);
 
+      console.log("📨 Response received:", response);
+
       if (response.success) {
+        console.log("✅ Order created successfully!");
         toast.success(response.message || "Order placed successfully!");
         await clearCart();
+        console.log("🧹 Cart cleared");
+        console.log("🔀 Redirecting to:", `/orders/${response.data._id}`);
         router.push(`/orders/${response.data._id}`);
       } else {
+        console.log("❌ Order creation failed:", response.message);
         toast.error(response.message || "Failed to create order");
       }
     } catch (error: any) {
-      console.error("Order creation error:", error);
+      console.error("💥 ERROR in order creation:", error);
+      console.error("Error details:", {
+        message: error.message,
+        stack: error.stack,
+        error: error,
+      });
       toast.error(error.message || "Failed to create order");
     } finally {
+      console.log("🏁 Setting isSubmitting to false");
       setIsSubmitting(false);
     }
   };
 
   // Empty cart state
   if (!cart || !hasItems) {
+    console.log("⚠️ Empty cart - showing empty state");
     return (
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-md mx-auto text-center">
@@ -132,6 +185,8 @@ export default function CheckoutPage() {
       </div>
     );
   }
+
+  console.log("✅ Rendering checkout form");
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -167,6 +222,7 @@ export default function CheckoutPage() {
               }
               className="w-full h-12 text-lg"
               size="lg"
+              onClick={() => console.log("🖱️ Button clicked!")}
             >
               {isSubmitting ? (
                 <>

@@ -15,22 +15,36 @@ const AddToCartButton = ({ productId, stock }: AddToCartButtonProps) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  console.log("🏠 Home AddToCartButton rendered");
+  console.log("Product ID:", productId);
+  console.log("Stock:", stock);
+  console.log("Is Authenticated:", isAuthenticated);
+
   const handleAddToCart = async (e: React.MouseEvent) => {
+    console.log("🖱️ HOME: Add to Cart clicked!");
+    console.log("Product ID:", productId);
+    
     e.preventDefault(); // Prevent Link navigation
     e.stopPropagation();
 
     if (!isAuthenticated) {
+      console.log("❌ Not authenticated - redirecting to login");
       router.push("/login");
       return;
     }
 
+    console.log("✅ Adding to cart...");
     setLoading(true);
     const success = await addToCart(productId, 1);
     setLoading(false);
 
+    console.log("📨 Result:", success);
+
     if (success) {
+      console.log("✅ Added to cart successfully!");
       alert("Added to cart!");
     } else {
+      console.log("❌ Failed to add to cart");
       alert("Failed to add to cart");
     }
   };

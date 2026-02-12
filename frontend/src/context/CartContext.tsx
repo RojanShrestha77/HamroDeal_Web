@@ -94,28 +94,42 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     productId: string,
     quantity: number,
   ): Promise<boolean> => {
+    console.log("🛒 CartContext.addToCart called");
+    console.log("Product ID:", productId);
+    console.log("Quantity:", quantity);
+    console.log("Is Authenticated:", isAuthenticated);
+    
     if (!isAuthenticated) {
+      console.log("❌ Not authenticated - redirecting to login");
       router.push("/login");
       return false;
     }
 
     try {
+      console.log("🌐 Calling handleAddToCart API...");
       setLoading(true);
       setError(null);
       const result = await handleAddToCart(productId, quantity);
 
+      console.log("📨 API Response:", result);
+
       if (result.success) {
+        console.log("✅ Cart updated successfully");
+        console.log("New cart data:", result.data);
         setCart(result.data);
         return true;
       } else {
+        console.log("❌ API returned error:", result.message);
         setError(result.message);
         return false;
       }
     } catch (err: any) {
+      console.error("💥 Error in addToCart:", err);
       setError(err.message || "Failed to add to cart");
       console.error("Error adding to cart:", err);
       return false;
     } finally {
+      console.log("🏁 Setting loading to false");
       setLoading(false);
     }
   };

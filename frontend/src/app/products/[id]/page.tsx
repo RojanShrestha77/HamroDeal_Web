@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { AddToCartButton } from "./_components/AddToCartButton";
 
 async function getProduct(id: string) {
   try {
@@ -16,7 +17,7 @@ async function getProduct(id: string) {
 export default async function ProductDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
   const result = await getProduct(id);
@@ -31,7 +32,7 @@ export default async function ProductDetailPage({
     <div className="max-w-6xl mx-auto p-6">
       <div className="mb-6">
         <Link
-          href="/seller/products"
+          href="/"
           className="text-blue-600 hover:text-blue-800"
         >
           ← Back to Products
@@ -104,12 +105,14 @@ export default async function ProductDetailPage({
             </div>
 
             <div className="space-y-3">
-              <button
-                disabled={product.stock === 0}
-                className="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-              >
-                {product.stock > 0 ? "Add to Cart" : "Out of Stock"}
-              </button>
+              <AddToCartButton 
+                productId={product._id}
+                productName={product.title}
+                productPrice={product.price}
+                productImage={product.images}
+                sellerId={product.sellerId?._id || product.sellerId}
+                stock={product.stock}
+              />
 
               <button className="w-full border-2 border-blue-600 text-blue-600 py-4 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
                 Contact Seller

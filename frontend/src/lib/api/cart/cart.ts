@@ -4,16 +4,25 @@ import { API } from "../endpoints";
 
 // Add item to cart
 export const addToCart = async (productId: string, quantity: number) => {
+    console.log("🌐 addToCart API called");
+    console.log("Product ID:", productId);
+    console.log("Quantity:", quantity);
+    console.log("Endpoint:", API.CART.ADD);
+
     try {
+        console.log("📤 Sending POST request...");
         const response = await axiosInstance.post(API.CART.ADD, {
             productId,
             quantity
         });
+        console.log("📨 Response received:", response.data);
         return response.data;
     } catch (error: Error | any) {
+        console.error("💥 Error in addToCart API:", error);
+        console.error("Error response:", error.response?.data);
         throw new Error(
-            error.response?.data?.message 
-            || error.message 
+            error.response?.data?.message
+            || error.message
             || 'Failed to add to cart'
         );
     }
@@ -26,8 +35,8 @@ export const getCart = async () => {
         return response.data;
     } catch (error: Error | any) {
         throw new Error(
-            error.response?.data?.message 
-            || error.message 
+            error.response?.data?.message
+            || error.message
             || 'Failed to get cart'
         );
     }
@@ -42,8 +51,8 @@ export const updateCartItem = async (productId: string, quantity: number) => {
         return response.data;
     } catch (error: Error | any) {
         throw new Error(
-            error.response?.data?.message 
-            || error.message 
+            error.response?.data?.message
+            || error.message
             || 'Failed to update cart'
         );
     }
@@ -56,8 +65,8 @@ export const removeFromCart = async (productId: string) => {
         return response.data;
     } catch (error: Error | any) {
         throw new Error(
-            error.response?.data?.message 
-            || error.message 
+            error.response?.data?.message
+            || error.message
             || 'Failed to remove from cart'
         );
     }
@@ -70,8 +79,8 @@ export const clearCart = async () => {
         return response.data;
     } catch (error: Error | any) {
         throw new Error(
-            error.response?.data?.message 
-            || error.message 
+            error.response?.data?.message
+            || error.message
             || 'Failed to clear cart'
         );
     }
