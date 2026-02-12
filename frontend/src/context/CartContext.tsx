@@ -17,8 +17,9 @@ import {
 } from "@/lib/actions/cart/cart.action";
 import { useRouter } from "next/navigation";
 
+type ProductRef = string | { _id: string };
 export interface CartItem {
-  productId: any;
+  productId: ProductRef;
   quantity: number;
   price: number;
   name?: string;
@@ -26,6 +27,9 @@ export interface CartItem {
   sellerId?: string;
   title?: string;
 }
+
+export const getProductId = (productId: ProductRef) =>
+  typeof productId === "string" ? productId : productId._id;
 
 export interface Cart {
   _id: string;

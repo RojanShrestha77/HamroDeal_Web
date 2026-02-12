@@ -1,4 +1,3 @@
-// app/checkout/page.tsx
 "use client";
 
 import { useCart } from "@/context/CartContext";
@@ -136,15 +135,10 @@ export default function CheckoutPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Progress Steps */}
       <ProgressSteps steps={steps} />
 
-      {/* Page Title */}
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
-
-      {/* Main Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Side - Form (2/3 width on large screens) */}
         <div className="lg:col-span-2">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* 1. Shipping Information */}

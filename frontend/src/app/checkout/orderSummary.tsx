@@ -1,9 +1,8 @@
-// app/checkout/orderSummary.tsx
 "use client";
 
 import { Package, ShieldCheck } from "lucide-react";
 import Image from "next/image";
-import { CartItem } from "@/context/CartContext"; // ✅ Import from context
+import { CartItem, getProductId } from "@/context/CartContext";
 import {
   Card,
   CardContent,
@@ -37,19 +36,16 @@ export function OrderSummary({
         </Badge>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Cart Items List */}
         <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
           {cart.map((item, index) => {
-            // Handle product name and image
             const productName = item.name || item.title || "Product";
             const productImage = item.image || "";
 
-            // ✅ Simple and correct - just use productId or fallback to index
             const productKey = item.productId || `item-${index}`;
 
             return (
               <div
-                key={productKey}
+                key={`${getProductId(item.productId)}-${index}`}
                 className="flex gap-3 pb-3 border-b last:border-b-0"
               >
                 {/* Product Image */}
