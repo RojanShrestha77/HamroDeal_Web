@@ -32,6 +32,13 @@ const Header = () => {
               >
                 My Profile
               </Link>
+              {/* Add this link in your navigation menu */}
+              <Link
+                href="/orders"
+                className="text-gray-700 hover:text-blue-600 transition"
+              >
+                My Orders
+              </Link>
             </>
           )}
           {user?.role === "admin" && (

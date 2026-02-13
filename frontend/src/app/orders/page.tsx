@@ -124,13 +124,13 @@ export default function OrdersPage() {
                 </div>
                 <span
                   className={`
-                  px-3 py-1 rounded-full text-xs font-semibold
-                  ${order.status === "pending" ? " bg-yellow-100 text-yellow-800" : ""}
-                  ${order.status === "processing" ? " bg-blue-100 text-blue-800" : ""}
-                  ${order.status === "shipped" ? " bg-purple-100 text-purple-800" : ""}
-                  ${order.status === "delivered" ? " bg-green-100 text-green-800" : ""}
-                  ${order.status === "cancelled" ? " bg-red-100 text-red-800" : ""}
-                `}
+                    px-3 py-1 rounded-full text-xs font-semibold
+                    ${order.status === "pending" ? " bg-yellow-100 text-yellow-800" : ""}
+                    ${order.status === "processing" ? " bg-blue-100 text-blue-800" : ""}
+                    ${order.status === "shipped" ? " bg-purple-100 text-purple-800" : ""}
+                    ${order.status === "delivered" ? " bg-green-100 text-green-800" : ""}
+                    ${order.status === "cancelled" ? " bg-red-100 text-red-800" : ""}
+                  `}
                 >
                   {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                 </span>
@@ -155,7 +155,7 @@ export default function OrdersPage() {
               <div className="border-t pt-4">
                 <p className="text-sm text-gray-500">Total Amount</p>
                 <p className="text-2xl font-bold text-blue-600">
-                  Rs {order.totalAmount.toFixed(2)}
+                  Rs {(order.total || 0).toFixed(2)}
                 </p>
               </div>
             </Link>
