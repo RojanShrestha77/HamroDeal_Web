@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const SELLER_LINKS = [
   { href: "/seller", label: "Dashboard" },
   { href: "/seller/products", label: "My Products" }, // ← as you requested
+  { href: "/seller/orders", label: "Orders" },
 ];
 
 export default function SellerSidebar() {
