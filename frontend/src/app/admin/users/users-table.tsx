@@ -4,6 +4,7 @@ import {
   approveSellerAction,
   deleteUserAction,
 } from "@/lib/actions/(admin)/user-action";
+import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 
 type User = {
@@ -81,13 +82,22 @@ export default function UsersTable({ initialUsers }: { initialUsers: User[] }) {
             <span>
               {u.email} — {u.role}
             </span>
-            <button
-              onClick={() => handleDelete(u._id)}
-              disabled={isPending || u.role === "admin"}
-              className="text-red-600 border border-red-600 px-2 py-1 rounded"
-            >
-              Delete
-            </button>
+            <div className="flex items-center gap-2">
+              <Link
+                href={`/admin/users/${u._id}/edit`}
+                className="text-blue-600 hover:text-blue-900"
+              >
+                Edit
+              </Link>
+
+              <button
+                onClick={() => handleDelete(u._id)}
+                disabled={isPending || u.role === "admin"}
+                className="text-red-600 border border-red-600 px-2 py-1 rounded"
+              >
+                Delete
+              </button>
+            </div>
           </li>
         ))}
       </ul>

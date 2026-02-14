@@ -18,9 +18,9 @@ export const createUser = async (userData: any) => {
 };
 
 // get all users
-export const getAllUsers = async () => {
+export const getAllUsers = async (params? : {page?: number; size?: number; search?: string}) => {
     try {
-        const response = await axiosInstance.get(API.ADMIN.USER.GET_ALL);
+        const response = await axiosInstance.get(API.ADMIN.USER.GET_ALL, { params });
         return response.data;
     } catch (error: Error | any) {
         throw new Error(
@@ -63,6 +63,22 @@ export const approveSeller = async (userId: string) => {
     } catch (error: Error | any) {
         throw new Error (
             error.repsonse?.data?.message || error.message || "Failed to approve seller"
+        );
+    }
+};
+
+// update user
+export const updateUser = async (userId: string, userData: any) => {
+    try {
+        const response = await axiosInstance.put(API.ADMIN.USER.UPDATE(userId), userData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
+        return response.data;
+    } catch (error: Error | any) {
+        throw new Error(
+            error.response?.data?.message || error.message || "Failed to update user"
         );
     }
 };
