@@ -1,5 +1,5 @@
 "use server";
-import { approveSeller, createUser, deleteUser, getAllUsers, updateUser } from "@/lib/api/(admin)/user";
+import { approveSeller, createUser, deleteUser, getAllUsers, getUserDetailPage, updateUser } from "@/lib/api/(admin)/user";
 import { revalidatePath } from "next/cache";
 
 /** CREATE USER */
@@ -127,6 +127,29 @@ export const updateUserAction = async (userId: string, data: FormData) => {
         return {
             success: false,
             message: error.message || "Update action failed",
+        };
+    }
+};
+export const getUserDetailPageAction = async (userId: string) => {
+    try {
+        const response = await getUserDetailPage(userId);
+
+        if (response.success) {
+            return {
+                success: true,
+                message: "User details fetched successfully",
+                data: response.data,
+            };
+        }
+
+        return {
+            success: false,
+            message: response.message || "Failed to fetch user details",
+        };
+    } catch (error: any) {
+        return {
+            success: false,
+            message: error.message || "Failed to fetch user details",
         };
     }
 };

@@ -31,7 +31,6 @@ export default function UsersTable({ initialUsers }: { initialUsers: User[] }) {
     startTransition(async () => {
       const res = await approveSellerAction(id);
       setMessage(res.message);
-
       if (res.success) {
         setUsers((prev) =>
           prev.map((u) => (u._id === id ? { ...u, isApproved: true } : u)),
@@ -41,10 +40,18 @@ export default function UsersTable({ initialUsers }: { initialUsers: User[] }) {
   };
 
   const handleDelete = (id: string) => {
+    const user = users.find((u) => u._id === id);
+
+    if (
+      !confirm(
+        `Are you sure you want to delete user "${user?.email}"? This action cannot be undone.`,
+      )
+    ) {
+      return;
+    }
     startTransition(async () => {
       const res = await deleteUserAction(id);
       setMessage(res.message);
-
       if (res.success) {
         setUsers((prev) => prev.filter((u) => u._id !== id));
       }
@@ -83,17 +90,27 @@ export default function UsersTable({ initialUsers }: { initialUsers: User[] }) {
               {u.email} — {u.role}
             </span>
             <div className="flex items-center gap-2">
+              {/* View Details Link - ADD THIS */}
+              <Link
+                href={`/admin/users/${u._id}`}
+                className="text-blue-600 hover:text-blue-900 border border-blue-600 px-2 py-1 rounded"
+              >
+                View
+              </Link>
+
+              {/* Edit Link */}
               <Link
                 href={`/admin/users/${u._id}/edit`}
-                className="text-blue-600 hover:text-blue-900"
+                className="text-yellow-600 hover:text-yellow-900 border border-yellow-600 px-2 py-1 rounded"
               >
                 Edit
               </Link>
 
+              {/* Delete Button */}
               <button
                 onClick={() => handleDelete(u._id)}
                 disabled={isPending || u.role === "admin"}
-                className="text-red-600 border border-red-600 px-2 py-1 rounded"
+                className="text-red-600 border border-red-600 px-2 py-1 rounded disabled:opacity-50"
               >
                 Delete
               </button>

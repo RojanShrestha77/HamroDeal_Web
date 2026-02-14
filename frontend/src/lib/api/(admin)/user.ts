@@ -82,3 +82,14 @@ export const updateUser = async (userId: string, userData: any) => {
         );
     }
 };
+
+export const getUserDetailPage = async (userId: string) => {
+    try {
+        const response = await axiosInstance.get(API.ADMIN.USER.GET_DETAILS(userId));
+        return response.data;
+    } catch (error: Error | any) {
+        throw new Error(
+            error.response?.data?.message || error.message || "Failed to fetch user details"
+        );
+    }
+};

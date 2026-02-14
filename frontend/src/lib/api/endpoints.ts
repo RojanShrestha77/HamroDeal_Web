@@ -13,6 +13,7 @@ export const API = {
             CREATE: '/api/admin/users',
             GET_ALL: '/api/admin/users',
             GET_ONE: (id: string) => `/api/admin/users/${id}`,
+            GET_DETAILS: (id: string) => `/api/admin/users/${id}/details`,
             UPDATE: (id: string) => `/api/admin/users/${id}`,
             DELETE: (id: string) => `/api/admin/users/${id}`,
             APPROVE_SELLER: (id: string) => `/api/admin/users/${id}/approve-seller`,
