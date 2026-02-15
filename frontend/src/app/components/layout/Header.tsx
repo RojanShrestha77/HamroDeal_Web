@@ -1,14 +1,15 @@
 "use client";
 import React from "react";
-import Container from "./Container";
-import Logo from "./Logo";
-import HeaderMenu from "./HeaderMenu";
+import Container from "../common/Container";
+import Logo from "../navigation/Logo";
+import HeaderMenu from "../navigation/HeaderMenu";
 import SearchBar from "./SearchBar";
-import CartIcon from "./CartIcon";
-import FavouriteButton from "../wishlist/_components/FavouriteButton";
+import CartIcon from "../common/CartIcon";
+import FavouriteButton from "../../wishlist/_components/FavouriteButton";
 import Link from "next/dist/client/link";
 import { useAuth } from "@/context/AuthContext";
-import MobileMenu from "./MobileMenu";
+import MobileMenu from "../navigation/MobileMenu";
+import AuthSection from "../auth/AuthSection";
 
 const Header = () => {
   const { user } = useAuth();
@@ -19,7 +20,10 @@ const Header = () => {
           <MobileMenu />
           <Logo />
         </div>
-        <HeaderMenu />
+        <div className="flex gap-14">
+          <AuthSection />
+          <HeaderMenu />
+        </div>
         <div className="flex items-center gap-4">
           {user && (
             <>

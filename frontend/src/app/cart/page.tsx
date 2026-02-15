@@ -1,6 +1,10 @@
 "use client";
 import React from "react";
-import { useCart } from "@/context/CartContext";
+import {
+  useCart,
+  isProductPopulated,
+  getProductId,
+} from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -12,7 +16,6 @@ const CartPage = () => {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
 
-  // Redirect to login if not authenticated
   React.useEffect(() => {
     if (!isAuthenticated && !loading) {
       router.push("/login");
@@ -94,12 +97,11 @@ const CartPage = () => {
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
             {cart.items.map((item) => {
-              const product =
-                typeof item.productId === "object" ? item.productId : null;
-              const productId =
-                typeof item.productId === "string"
-                  ? item.productId
-                  : item.productId._id;
+              // ✅ Use helper functions from context
+              const productId = getProductId(item.productId);
+              const product = isProductPopulated(item.productId)
+                ? item.productId
+                : null;
 
               return (
                 <div
@@ -124,7 +126,7 @@ const CartPage = () => {
                   {/* Product Info */}
                   <div className="flex-1">
                     <h3 className="font-semibold text-lg mb-1">
-                      {product?.title || "Product"}
+                      {product?.title || item.title || "Product"}
                     </h3>
                     <p className="text-gray-600 text-sm mb-2">
                       Rs {item.price} each
@@ -176,7 +178,6 @@ const CartPage = () => {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow p-6 sticky top-24">
               <h2 className="text-xl font-bold mb-4">Order Summary</h2>
-
               <div className="space-y-3 mb-4">
                 <div className="flex justify-between text-gray-600">
                   <span>Items ({cart.itemCount})</span>
@@ -192,14 +193,12 @@ const CartPage = () => {
                 </div>
               </div>
 
-              {/* proceed to the checkout */}
               <button
                 onClick={handleProceedToCheckout}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition mb-3"
               >
                 Proceed to Checkout
               </button>
-
               <Link
                 href="/"
                 className="block text-center text-blue-600 hover:text-blue-700 text-sm"

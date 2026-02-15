@@ -2,7 +2,7 @@
 import {
   UpdateUserData,
   updateUserSchema,
-} from "@/app/schema/updateUserSchema";
+} from "@/app/user/schema/updateUserSchema";
 import { Controller, useForm } from "react-hook-form";
 import { handleUpdateProfile } from "@/lib/actions/auth.action";
 import { zodResolver } from "@hookform/resolvers/zod";

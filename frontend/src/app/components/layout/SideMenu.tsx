@@ -1,10 +1,10 @@
 import React, { FC } from "react";
-import Logo from "./Logo";
 import { X } from "lucide-react";
 import { headerData } from "@/app/constant/data";
 import Link from "next/link";
-import SocialMedia from "./SocialMedia";
-import { useOutsideClick } from "../../../hooks";
+import { useOutsideClick } from "../../../../hooks";
+import Logo from "../navigation/Logo";
+import SocialMedia from "../common/SocialMedia";
 
 interface SidebarProps {
   isOpen: boolean;

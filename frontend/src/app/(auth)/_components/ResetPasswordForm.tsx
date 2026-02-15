@@ -6,7 +6,7 @@ import Link from "next/link";
 import {
   ResetPasswordDTO,
   ResetPasswordSchema,
-} from "@/app/schema/resetPasswordSchema";
+} from "@/app/(auth)/schema/resetPasswordSchema";
 import { useRouter } from "next/navigation";
 import { handleResetPassword } from "@/lib/actions/auth.action";
 

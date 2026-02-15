@@ -5,7 +5,7 @@ import {
   deleteUserAction,
 } from "@/lib/actions/(admin)/user-action";
 import Link from "next/link";
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 
 type User = {
   _id: string;
@@ -21,6 +21,10 @@ export default function UsersTable({ initialUsers }: { initialUsers: User[] }) {
   const [users, setUsers] = useState(initialUsers);
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    setUsers(initialUsers);
+  }, [initialUsers]);
 
   const pendingSellers = useMemo(
     () => users.filter((u) => u.role === "seller" && !u.isApproved),

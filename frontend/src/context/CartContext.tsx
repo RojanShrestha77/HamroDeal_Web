@@ -1,4 +1,3 @@
-// context/CartContext.tsx
 "use client";
 import {
   createContext,
@@ -14,32 +13,19 @@ import {
   handleGetCart,
   handleRemoveFromCart,
   handleUpdateCartItem,
-} from "@/lib/actions/cart/cart.action";
+} from "@/lib/actions/cart.action";
 import { useRouter } from "next/navigation";
+import {
+  Cart,
+  CartItem,
+  getProductId,
+  isProductPopulated,
+  PopulatedProduct,
+  ProductRef,
+} from "@/app/cart/schema/cart.schema";
 
-type ProductRef = string | { _id: string };
-export interface CartItem {
-  productId: ProductRef;
-  quantity: number;
-  price: number;
-  name?: string;
-  image?: string;
-  sellerId?: string;
-  title?: string;
-}
-
-export const getProductId = (productId: ProductRef) =>
-  typeof productId === "string" ? productId : productId._id;
-
-export interface Cart {
-  _id: string;
-  userId?: string;
-  items: CartItem[];
-  total: number;
-  itemCount: number;
-  createdAt: string;
-  updatedAt: string;
-}
+export type { Cart, CartItem, PopulatedProduct, ProductRef };
+export { getProductId, isProductPopulated };
 
 // Context props
 interface CartContextProps {
@@ -64,7 +50,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
 
-  // fetching from the backend
+  // Fetch cart from backend
   const fetchCart = async () => {
     if (!isAuthenticated) {
       setCart(null);
@@ -89,7 +75,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // add item to the cart
+  // Add item to cart
   const addToCart = async (
     productId: string,
     quantity: number,
@@ -98,9 +84,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     console.log("Product ID:", productId);
     console.log("Quantity:", quantity);
     console.log("Is Authenticated:", isAuthenticated);
-    
+
     if (!isAuthenticated) {
-      console.log("❌ Not authenticated - redirecting to login");
       router.push("/login");
       return false;
     }
@@ -110,31 +95,24 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       setError(null);
       const result = await handleAddToCart(productId, quantity);
-
       console.log("📨 API Response:", result);
 
       if (result.success) {
-        console.log("✅ Cart updated successfully");
-        console.log("New cart data:", result.data);
         setCart(result.data);
         return true;
       } else {
-        console.log("❌ API returned error:", result.message);
         setError(result.message);
         return false;
       }
     } catch (err: any) {
-      console.error("💥 Error in addToCart:", err);
       setError(err.message || "Failed to add to cart");
-      console.error("Error adding to cart:", err);
       return false;
     } finally {
-      console.log("🏁 Setting loading to false");
       setLoading(false);
     }
   };
 
-  // update quantity
+  // Update quantity
   const updateQuantity = async (
     productId: string,
     quantity: number,
@@ -165,7 +143,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // remove item from cart
+  // Remove item from cart
   const removeItem = async (productId: string): Promise<boolean> => {
     if (!isAuthenticated) {
       router.push("/login");
@@ -175,7 +153,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     try {
       setLoading(true);
       setError(null);
-
       const result = await handleRemoveFromCart(productId);
 
       if (result.success) {
@@ -194,7 +171,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // clear entire cart
+  // Clear entire cart
   const clearCart = async (): Promise<boolean> => {
     if (!isAuthenticated) {
       router.push("/login");
@@ -204,8 +181,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     try {
       setLoading(true);
       setError(null);
-
       const result = await handleClearCart();
+
       if (result.success) {
         setCart(result.data);
         return true;
@@ -222,17 +199,17 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // get total item
+  // Get total item count
   const getItemCount = (): number => {
     return cart?.itemCount || 0;
   };
 
-  // get cart total
+  // Get cart total
   const getCartTotal = (): number => {
     return cart?.total || 0;
   };
 
-  // fetch cart when the user logs in
+  // Fetch cart when user logs in
   useEffect(() => {
     if (isAuthenticated) {
       fetchCart();

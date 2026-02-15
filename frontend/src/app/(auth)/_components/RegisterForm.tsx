@@ -1,5 +1,5 @@
 "use client";
-import { registerSchema } from "@/app/schema/registerSchema";
+import { registerSchema } from "@/app/(auth)/schema/registerSchema";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useState, useTransition } from "react";

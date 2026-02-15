@@ -15,7 +15,7 @@ import { PaymentSection } from "./_component/PaymentSection";
 import { NotesSection } from "./_component/NotesSection";
 import { OrderSummary } from "./orderSummary";
 import { Button } from "../components/ui/button";
-import { ProgressSteps } from "../components/ProgressSteps";
+import { ProgressSteps } from "../components/common/ProgressSteps";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -94,26 +94,28 @@ export default function CheckoutPage() {
       const orderData = {
         items: cartItems.map((item) => {
           // Extract productId - handle both string and object formats
-          const productId = typeof item.productId === 'string' 
-            ? item.productId 
-            : (item.productId as any)._id;
-          
+          const productId =
+            typeof item.productId === "string"
+              ? item.productId
+              : (item.productId as any)._id;
+
           // Extract product details
-          const productDetails = typeof item.productId === 'object' 
-            ? (item.productId as any)
-            : null;
-          
+          const productDetails =
+            typeof item.productId === "object" ? (item.productId as any) : null;
+
           // Extract sellerId - handle both string and object formats
-          let sellerId = item.sellerId || '';
+          let sellerId = item.sellerId || "";
           if (productDetails && productDetails.sellerId) {
-            sellerId = typeof productDetails.sellerId === 'string'
-              ? productDetails.sellerId
-              : productDetails.sellerId._id;
+            sellerId =
+              typeof productDetails.sellerId === "string"
+                ? productDetails.sellerId
+                : productDetails.sellerId._id;
           }
 
           return {
             productId: productId,
-            productName: item.name || item.title || productDetails?.title || "Product",
+            productName:
+              item.name || item.title || productDetails?.title || "Product",
             productImage: item.image || productDetails?.images || "",
             quantity: item.quantity,
             price: item.price,
@@ -135,7 +137,10 @@ export default function CheckoutPage() {
       };
 
       console.log("📦 Order Data to send:", orderData);
-      console.log("📦 Order Items detail:", JSON.stringify(orderData.items, null, 2));
+      console.log(
+        "📦 Order Items detail:",
+        JSON.stringify(orderData.items, null, 2),
+      );
       console.log("🌐 Calling handleCreateOrder...");
 
       const response = await handleCreateOrder(orderData);

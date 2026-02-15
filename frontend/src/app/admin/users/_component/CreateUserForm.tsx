@@ -1,10 +1,10 @@
 "use client";
 import { Controller, useForm } from "react-hook-form";
 import { useRef, useState, useTransition } from "react";
-import { UserData, UserSchema } from "../schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import { handleCreateUser } from "@/lib/actions/(admin)/user-action";
+import { UserData, UserSchema } from "../schema/schema";
 
 export default function CreateUserForm() {
   const [pending, startTransition] = useTransition();

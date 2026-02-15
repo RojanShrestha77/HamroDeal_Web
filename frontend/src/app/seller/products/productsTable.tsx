@@ -29,20 +29,31 @@ export default function ProductsTable({
 
   const handleDelete = async (e: React.MouseEvent, productId: string) => {
     e.stopPropagation();
+    console.log("Delete product with ID:", productId);
     const del = confirm("Are you sure you want to delete this product");
-    if (!del) return;
+    if (!del) {
+      console.log("❌ User cancelled");
+      return;
+    }
     setLoading(productId);
     try {
+      console.log("🟡 Calling deleteProductAction...");
+
       const result = await deleteProductAction(productId);
+      console.log("🟢 Result:", result);
 
       if (result.success) {
         toast.success("Product deletd successfully");
         setProducts(products.filter((p) => p._id !== productId));
         router.refresh();
       } else {
+        console.log("❌ Delete failed:", result.message);
+
         toast.error(result.message);
       }
     } catch (error: any) {
+      console.log("💥 Error:", error);
+
       toast.error(error.message || "Failed to delete product");
     } finally {
       setLoading(null);

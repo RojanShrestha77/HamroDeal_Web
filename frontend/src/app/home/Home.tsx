@@ -1,4 +1,4 @@
-import HomeBanner from "./HomeBanner";
+import HomeBanner from "./_components/HomeBanner";
 import ProductHomePage from "../products/Products";
 
 const HomePage = () => {

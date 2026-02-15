@@ -1,7 +1,5 @@
-import Container from "@/app/components/Container";
-import HomePage from "@/app/components/Home";
-import { Button } from "@/app/components/ui/button";
-import AuthSection from "@/app/components/AuthSection"; // ✅
+import Container from "@/app/components/common/Container";
+import HomePage from "@/app/home/Home";
 
 export default function Home() {
   return (
@@ -9,7 +7,6 @@ export default function Home() {
       <Container>
         <div>
           <HomePage />
-          <AuthSection />
         </div>
         {/* <Home /> */}
       </Container>

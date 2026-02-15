@@ -1,5 +1,5 @@
 "use client";
-import { loginSchema } from "@/app/schema/loginSchema";
+import { loginSchema } from "@/app/(auth)/schema/loginSchema";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";

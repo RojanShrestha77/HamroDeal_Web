@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google"; // or Poppins
 import "./globals.css";
-import Footer from "@/app/components/Footer";
-import Header from "@/app/components/Header";
+import Footer from "@/app/components/layout/Footer";
+import Header from "@/app/components/layout/Header";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishListContext";

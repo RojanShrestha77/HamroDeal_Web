@@ -14,7 +14,7 @@ import {
   clearWishlistAction,
   getWishlistAction,
   removeFromWishlistAction,
-} from "@/lib/actions/wishlist/wishlist.action";
+} from "@/lib/actions/wishlist.action";
 
 interface WishlistItem {
   productId: any;
