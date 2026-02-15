@@ -1,5 +1,6 @@
-import axiosInstance from "../axios";
-import { API } from "../endpoints";
+import axiosInstance from "./axios";
+import { API } from "./endpoints";
+
 
 
 // Add item to cart

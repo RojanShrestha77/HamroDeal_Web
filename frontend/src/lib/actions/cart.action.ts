@@ -1,7 +1,7 @@
 'use server'
 
-import { addToCart, clearCart, getCart, removeFromCart, updateCartItem } from "@/lib/api/cart/cart";
 import { revalidatePath } from "next/cache";
+import { addToCart, clearCart, getCart, removeFromCart, updateCartItem } from "../api/cart";
 
 export async function handleAddToCart(productId: string, quantity: number) {
     console.log("🔧 handleAddToCart (server action) called");

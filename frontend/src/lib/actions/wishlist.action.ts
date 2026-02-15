@@ -1,8 +1,8 @@
 "use server";
 
 
-import { addToWishList,  clearWishlist, getWishList, removeFromWishList } from "@/lib/api/wishlist/wishlist";
 import { revalidatePath } from "next/cache";
+import { addToWishList, clearWishlist, getWishList, removeFromWishList } from "../api/wishlist";
 
 // get the wishlist
 export const getWishlistAction = async () => {

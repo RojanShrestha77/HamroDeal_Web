@@ -1,4 +1,4 @@
-import { getAllProduct, getOneProduct } from "@/lib/api/product/product";
+import { getAllProduct, getOneProduct } from "../api/product";
 
 export async function getOneProductAction(productId: string) {
     try {

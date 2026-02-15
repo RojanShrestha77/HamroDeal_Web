@@ -1,5 +1,5 @@
-import axiosInstance from "../axios"
-import { API } from "../endpoints"
+import axiosInstance from "./axios";
+import { API } from "./endpoints";
 
 export const getOneProduct = async (productId: string) => {
     try {
