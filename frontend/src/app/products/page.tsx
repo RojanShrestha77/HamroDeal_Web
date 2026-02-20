@@ -1,5 +1,6 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import SearchBar from "../components/layout/SearchBar";
 
 export default function ProductBrowsePage() {
   const searchParams = useSearchParams();
@@ -35,7 +36,8 @@ export default function ProductBrowsePage() {
       if (category) params.append("category", category);
       if (search) params.append("search", search);
       if (minPrice) params.append("minPrice", minPrice);
-      if (maxPrice) params.append("sort", sort);
+      if (maxPrice) params.append("maxprice", maxPrice);
+      if (sort) params.append("sort", sort);
 
       const response = await fetch(
         `http://localhost:5050/api/product?${params.toString()}`,
@@ -70,7 +72,51 @@ export default function ProductBrowsePage() {
     Object.entries(newFilters).forEach(([key, value]) => {
       if (value) {
         params.set(key, value);
+      } else {
+        params.delete(key);
       }
     });
+
+    router.push(`/products?${params.toString()}`);
   };
+
+  return (
+    <div>
+      <div>
+        <div>
+          {/* searchbar */}
+          <SearchBar
+            initialValue={search}
+            onSearch={(query) => updateFilters({ search: query })}
+          />
+        </div>
+      </div>
+
+      {/* mai content */}
+      <div>
+        <div>
+          <aside>
+            <CategorySidebar
+              categoreis={categories}
+              selectedCategories={category}
+              onSelectedCategory={(cat) => updateFilters({ category: cat })}
+            />
+          </aside>
+
+          {/* main content */}
+          <main>
+            <FilterPanel>
+              minPrice={minPrice}
+              maxPrice={maxPrice}
+              sort={sort}
+              onApplyFilter={updateFilters}
+            </FilterPanel>
+
+            {/* prodycts */}
+            <ProductGrid products={products} loading={loading} />
+          </main>
+        </div>
+      </div>
+    </div>
+  );
 }
