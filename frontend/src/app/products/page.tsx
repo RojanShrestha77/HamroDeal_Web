@@ -1,18 +1,23 @@
+"use client";
+
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import SearchBar from "../components/layout/SearchBar";
+import ProductGrid from "./_components/ProductGrid";
+import FilterPanel from "./_components/filterPanel";
+import CategorySidebar from "./_components/CategorySideabar";
+import SearchBar from "./_components/SearchBar";
 
 export default function ProductBrowsePage() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
   // state
-  const [productState, setProducts] = useState([]);
+  const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // filter values
-  const category = searchParams.get("category") || "";
+  const category = searchParams.get("categoryId") || "";
   const search = searchParams.get("search") || "";
   const minPrice = searchParams.get("minPrice") || "";
   const maxPrice = searchParams.get("maxPrice") || "";
@@ -20,7 +25,7 @@ export default function ProductBrowsePage() {
 
   useEffect(() => {
     fetchProducts();
-  }, [categories, search, minPrice, maxPrice, sort]);
+  }, [category, search, minPrice, maxPrice, sort]);
 
   useEffect(() => {
     fetchCategories();
@@ -29,18 +34,17 @@ export default function ProductBrowsePage() {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams(); //creates emptty container to hold key-value p[airs that will be added to the url]
-      // bag is empty {}
-      // bag now has { category "shoes"}
-      // params.append('Category', 'Shoes');
-      if (category) params.append("category", category);
+      const params = new URLSearchParams();
+
+      // Add all filters to params
+      if (category) params.append("categoryId", category);
       if (search) params.append("search", search);
       if (minPrice) params.append("minPrice", minPrice);
-      if (maxPrice) params.append("maxprice", maxPrice);
+      if (maxPrice) params.append("maxPrice", maxPrice);
       if (sort) params.append("sort", sort);
 
       const response = await fetch(
-        `http://localhost:5050/api/product?${params.toString()}`,
+        `http://localhost:5050/api/products?${params.toString()}`,
       );
       const data = await response.json();
 
@@ -56,7 +60,7 @@ export default function ProductBrowsePage() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("http://localhost:500/api/categories");
+      const response = await fetch("http://localhost:5050/api/categories");
       const data = await response.json();
       if (data.success) {
         setCategories(data.data);
@@ -87,7 +91,7 @@ export default function ProductBrowsePage() {
           {/* searchbar */}
           <SearchBar
             initialValue={search}
-            onSearch={(query) => updateFilters({ search: query })}
+            onSearch={(query: string) => updateFilters({ search: query })}
           />
         </div>
       </div>
@@ -97,20 +101,22 @@ export default function ProductBrowsePage() {
         <div>
           <aside>
             <CategorySidebar
-              categoreis={categories}
-              selectedCategories={category}
-              onSelectedCategory={(cat) => updateFilters({ category: cat })}
+              categories={categories}
+              selectedCategory={category}
+              onSelectCategory={(cat: string) =>
+                updateFilters({ categoryId: cat })
+              }
             />
           </aside>
 
           {/* main content */}
           <main>
-            <FilterPanel>
+            <FilterPanel
               minPrice={minPrice}
               maxPrice={maxPrice}
               sort={sort}
-              onApplyFilter={updateFilters}
-            </FilterPanel>
+              onApplyFilters={updateFilters}
+            />
 
             {/* prodycts */}
             <ProductGrid products={products} loading={loading} />
