@@ -2,76 +2,49 @@
 import React from "react";
 import Container from "../common/Container";
 import Logo from "../navigation/Logo";
-import HeaderMenu from "../navigation/HeaderMenu";
-import SearchBar from "./SearchBar";
+import HeaderSearchBar from "./HeaderSearchBar";
 import CartIcon from "../common/CartIcon";
 import FavouriteButton from "../../wishlist/_components/FavouriteButton";
-import Link from "next/dist/client/link";
 import { useAuth } from "@/context/AuthContext";
 import MobileMenu from "../navigation/MobileMenu";
 import AuthSection from "../auth/AuthSection";
+import Link from "next/link";
 
 const Header = () => {
   const { user } = useAuth();
   return (
-    <header className="sticky top-0 z-50 py-5 bg-white/70 backdrop-blur-md">
-      <Container className="flex items-center justify-between text-lightColor">
-        <div className="w-auto md:w-1/3 flex items-center gap-2.5 justify-start md:gap-0">
-          <MobileMenu />
-          <Logo />
-        </div>
-        <div className="flex gap-14">
-          <AuthSection />
-          <HeaderMenu />
-        </div>
-        <div className="flex items-center gap-4">
-          {user && (
-            <>
-              <Link href="/my-blogs" className="hover:text-shop_light_green">
-                My Blogs
-              </Link>
+    <header className="sticky top-0 z-50 py-3 bg-white/70 backdrop-blur-md border-b border-neutral-100">
+      <Container>
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 shrink-0">
+            <MobileMenu />
+            <Logo />
+          </div>
+
+          {/*Search Bar */}
+          <div className="hidden sm:flex flex-1 max-w-sm mx-auto">
+            <HeaderSearchBar />
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0">
+            <CartIcon />
+            <FavouriteButton />
+            {user ? (
+              <AuthSection />
+            ) : (
               <Link
-                href="/user/profile"
-                className="hover:text-shop_light_green"
+                href="/login"
+                className="text-sm font-medium text-neutral-700 hover:text-neutral-900 transition whitespace-nowrap"
               >
-                My Profile
+                Sign In
               </Link>
-              {/* Add this link in your navigation menu */}
-              <Link
-                href="/orders"
-                className="text-gray-700 hover:text-blue-600 transition"
-              >
-                My Orders
-              </Link>
-            </>
-          )}
-          {user?.role === "admin" && (
-            <>
-              <Link href="/admin" className="hover:text-shop_light_green">
-                Admin
-              </Link>
-              <Link href="/admin/blogs" className="hover:text-shop_light_green">
-                Manage Blogs
-              </Link>
-            </>
-          )}
-          {user?.role === "seller" && (
-            <Link href="/seller" className="hover:text-shop_light_green">
-              Seller
-            </Link>
-          )}
+            )}
+          </div>
         </div>
-        <div className="w-auto md:w-1/3 flex items-center justify-end gap-5">
-          <SearchBar />
-          <CartIcon />
-          <FavouriteButton />
-          {!user && (
-            <div>
-              <Link href="/login">
-                <button>SignIn</button>
-              </Link>
-            </div>
-          )}
+
+        {/* Search Bar on mobile  */}
+        <div className="sm:hidden mt-2">
+          <HeaderSearchBar />
         </div>
       </Container>
     </header>
