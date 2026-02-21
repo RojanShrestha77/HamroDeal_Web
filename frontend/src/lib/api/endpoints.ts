@@ -28,6 +28,14 @@ export const API = {
             GET_ONE: (id: string) => `/api/admin/orders/${id}`,
             UPDATE_STATUS: (id: string) => `/api/admin/orders/${id}/status`,
             DELETE: (id: string) => `/api/admin/orders/${id}`,
+        },
+        ANALYTICS: {
+            OVERVIEW: '/admin/analytics/overview',
+            REVENUE: '/admin/analytics/revenue',
+            TOP_PRODUCTS: '/admin/analytics/top-products',
+            RECENT_ORDERS: '/admin/analytics/recent-orders',
+            LOW_STOCK: '/admin/analytics/low-stock',
+            TOP_SELLERS: '/admin/analytics/top-sellers',
         }
     },
     BLOGS: {
