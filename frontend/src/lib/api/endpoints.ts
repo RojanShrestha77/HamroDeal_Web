@@ -30,12 +30,12 @@ export const API = {
             DELETE: (id: string) => `/api/admin/orders/${id}`,
         },
         ANALYTICS: {
-            OVERVIEW: '/admin/analytics/overview',
-            REVENUE: '/admin/analytics/revenue',
-            TOP_PRODUCTS: '/admin/analytics/top-products',
-            RECENT_ORDERS: '/admin/analytics/recent-orders',
-            LOW_STOCK: '/admin/analytics/low-stock',
-            TOP_SELLERS: '/admin/analytics/top-sellers',
+            OVERVIEW: '/api/admin/analytics/overview',
+            REVENUE: '/api/admin/analytics/revenue',
+            TOP_PRODUCTS: '/api/admin/analytics/top-products',
+            RECENT_ORDERS: '/api/admin/analytics/recent-orders',
+            LOW_STOCK: '/api/admin/analytics/low-stock',
+            TOP_SELLERS: '/api/admin/analytics/top-sellers',
         }
     },
     BLOGS: {
