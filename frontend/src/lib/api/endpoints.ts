@@ -84,5 +84,12 @@ export const API = {
         REMOVE: (productId: string) => `/api/wishlist/${productId}`,
         CLEAR: '/api/wishlist/clear/all',
     },
+    REVIEWS: {
+        GET_PRODUCT_REVIEWS: (productId: string) => `/api/reviews/product/${productId}`,
+        CREATE: (productId: string) => `/api/reviews/product/${productId}`,
+        GET_MY_REVIEWS: '/api/reviews/my-reviews',
+        UPDATE: (reviewId: string) => `/api/reviews/${reviewId}`,
+        DELETE: (reviewId: string) => `/api/reviews/${reviewId}`,
+    }
 
 }
