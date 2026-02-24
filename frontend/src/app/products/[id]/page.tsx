@@ -1,6 +1,11 @@
+"use client";
+
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { AddToCartButton } from "./_components/AddToCartButton";
+import { useAuth } from "@/context/AuthContext";
+import { use, useEffect, useState } from "react";
+import ProductReviews from "@/app/review/_component/ProductReview";
 
 async function getProduct(id: string) {
   try {
@@ -14,27 +19,45 @@ async function getProduct(id: string) {
   }
 }
 
-export default async function ProductDetailPage({
+export default function ProductDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
-  const result = await getProduct(id);
+  const { id } = use(params);
+  const { user } = useAuth(); // Get user from AuthContext
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!result?.success || !result.data) {
-    notFound();
+  useEffect(() => {
+    const fetchProduct = async () => {
+      const result = await getProduct(id);
+      if (!result?.success || !result.data) {
+        notFound();
+      }
+      setProduct(result.data);
+      setLoading(false);
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
   }
 
-  const product = result.data;
+  if (!product) {
+    notFound();
+  }
 
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="mb-6">
-        <Link
-          href="/"
-          className="text-blue-600 hover:text-blue-800"
-        >
+        <Link href="/" className="text-blue-600 hover:text-blue-800">
           ← Back to Products
         </Link>
       </div>
@@ -105,7 +128,7 @@ export default async function ProductDetailPage({
             </div>
 
             <div className="space-y-3">
-              <AddToCartButton 
+              <AddToCartButton
                 productId={product._id}
                 productName={product.title}
                 productPrice={product.price}
@@ -146,6 +169,11 @@ export default async function ProductDetailPage({
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="border-t p-8">
+          <ProductReviews productId={product._id} currentUserId={user?._id} />
         </div>
       </div>
     </div>
