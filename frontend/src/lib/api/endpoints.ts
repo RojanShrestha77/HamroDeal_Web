@@ -98,6 +98,18 @@ export const API = {
         MARK_ALL_AS_READ: '/api/notifications/mark-all-read',
         DELETE: (id: string) => `/api/notifications/${id}`,
         DELETE_ALL: '/api/notifications',
-    }
-
+    },
+    CONVERSATIONS: {
+        CREATE_OR_GET: '/api/conversations',
+        GET_ALL: '/api/conversations',
+        GET_ONE: (id: string) => `/api/conversations/${id}`,
+        DELETE: (id: string) => `/api/conversations/${id}`,
+        RESET_UNREAD: (id: string) => `/api/conversations/${id}/read`,
+    },
+        MESSAGES: {
+        SEND: '/api/messages',
+        GET_BY_CONVERSATION: (conversationId: string) => `/api/messages/conversation/${conversationId}`,
+        DELETE: (id: string) => `/api/messages/${id}`,
+        MARK_AS_READ: (conversationId: string) => `/api/messages/conversation/${conversationId}/read`,
+    },
 }
