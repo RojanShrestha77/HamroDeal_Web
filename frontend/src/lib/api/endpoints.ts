@@ -90,6 +90,14 @@ export const API = {
         GET_MY_REVIEWS: '/api/reviews/my-reviews',
         UPDATE: (reviewId: string) => `/api/reviews/${reviewId}`,
         DELETE: (reviewId: string) => `/api/reviews/${reviewId}`,
+    },
+    NOTIFICATIONS: {
+        GET_ALL: '/api/notifications',
+        GET_UNREAD_COUNT: '/api/notifications/unread-count',
+        MARK_AS_READ: (id: string) => `/api/notifications/${id}/read`,
+        MARK_ALL_AS_READ: '/api/notifications/mark-all-read',
+        DELETE: (id: string) => `/api/notifications/${id}`,
+        DELETE_ALL: '/api/notifications',
     }
 
 }
