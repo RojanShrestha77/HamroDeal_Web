@@ -1,31 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import {io, Socket} from 'socket.io-client';
+import { Message } from "@/app/conversation/schema/chat.schema";
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5050';
-
-export interface Message {
-    _id: string;
-    conversationId: string;
-    senderId: {
-        _id: string;
-        firstName?: string;
-        lastName?: string;
-        email: string;
-        imageUrl?: string;
-    };
-    receiverId: {
-        _id: string;
-        firstName?: string;
-        lastName?: string;
-        email: string;
-        imageUrl?: string;
-    };
-    text: string;
-    type: 'text' | 'image' | 'file';
-    status: 'sent'  | 'delivered' | 'read';
-    createdAt: string;
-    updatedAt: string;
-}
 
 export const useSocket = (token: string | null) => {
     const [socket, setSocket] = useState<Socket | null>(null);
