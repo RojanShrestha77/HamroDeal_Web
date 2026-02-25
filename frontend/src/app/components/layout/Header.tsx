@@ -10,6 +10,7 @@ import MobileMenu from "../navigation/MobileMenu";
 import AuthSection from "../auth/AuthSection";
 import Link from "next/link";
 import NotificationBell from "@/app/notification/_components/NotificationBell";
+import ChatIcon from "@/app/messages/_components/ChatIcon";
 
 const Header = () => {
   const { user } = useAuth();
@@ -30,6 +31,7 @@ const Header = () => {
           <div className="flex items-center gap-3 shrink-0">
             <CartIcon />
             <NotificationBell />
+            <ChatIcon />
             <FavouriteButton />
             {user ? (
               <AuthSection />

@@ -1,6 +1,8 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import {io, Socket} from 'socket.io-client';
-import { Message } from "@/app/conversation/schema/chat.schema";
+import { Message } from "@/app/messages/schema/chat.schema";
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5050';
 
@@ -20,15 +22,19 @@ export const useSocket = (token: string | null) => {
             }
             return;
         }
+        console.log('Token:', token);
+
 
         // create socket conection
         const newSocket = io(SOCKET_URL, {
             auth: { token },
-            transports: ['websocket', 'poiling'],
+            transports: ['websocket', 'polling'],
         });
 
         socketRef.current = newSocket;
         setSocket(newSocket);
+        console.log('Socket URL:', SOCKET_URL);
+
         
         // connnection events
         newSocket.on('connect',() => {
@@ -63,7 +69,7 @@ export const useSocket = (token: string | null) => {
         }
     }, [token]);
 
-    const sendMesage = (
+    const sendMessage = (
         conversationId: string,
         text: string,
         callback?: (response: { success: boolean; message?: Message; error?: string}) => void ) => {
@@ -99,7 +105,7 @@ export const useSocket = (token: string | null) => {
         socket,
         isConnected,
         onlineUsers,
-        sendMesage,
+        sendMessage,
         markAsRead,
         emitTyping,
         emitStopTyping,

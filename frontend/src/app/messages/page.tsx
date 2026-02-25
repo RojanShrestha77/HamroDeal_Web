@@ -1,8 +1,12 @@
+"use client";
+
 import { getConversationsAction } from "@/lib/actions/conversation.action";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useSocket } from "../../../hooks/useSocket";
 import { Conversation } from "./schema/chat.schema";
+import { useRouter } from "next/navigation";
+import { createOrGetConversationAction } from "@/lib/actions/conversation.action";
+import { getAuthToken } from "@/lib/cookies";
 
 export default function MessagesPage() {
   const router = useRouter();
@@ -13,11 +17,32 @@ export default function MessagesPage() {
   const { isConnected, isUserOnline } = useSocket(token);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    setToken(storedToken);
+    const loadToken = async () => {
+      const authToken = await getAuthToken();
+      setToken(authToken || null);
+    };
 
-    loadConversations();
+    loadToken();
   }, []);
+
+  useEffect(() => {
+    if (token !== undefined) {
+      loadConversations();
+    }
+  }, [token]);
+
+  const createTestConversation = async () => {
+    const otherUserId = prompt("Enter other user ID:");
+    if (otherUserId) {
+      const result = await createOrGetConversationAction(otherUserId);
+      if (result.success) {
+        alert("Conversation created!");
+        loadConversations();
+      } else {
+        alert("Error: " + result.message);
+      }
+    }
+  };
 
   const loadConversations = async () => {
     try {
@@ -35,7 +60,9 @@ export default function MessagesPage() {
   };
 
   const formatTime = (timestamp: string) => {
+    if (!timestamp) return "";
     const date = new Date(timestamp);
+    if (isNaN(date.getTime())) return "";
     const now = new Date();
     const diff = now.getTime() - date.getTime();
     const hours = Math.floor(diff / (1000 * 60 * 60));
@@ -73,13 +100,19 @@ export default function MessagesPage() {
       {conversations.length === 0 ? (
         <div className="text-center py-12 text-gray-500">
           No Conversations yet
+          <button
+            onClick={createTestConversation}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            Create Test Conversation
+          </button>
         </div>
       ) : (
         <div className="space-y-2">
           {conversations.map((conversation) => (
             <div
               key={conversation._id}
-              onClick={() => router.push(`/messages.${conversation._id}`)}
+              onClick={() => router.push(`/messages/${conversation._id}`)}
               className="flex items-center gap-4 p-4 bg-white rounded-lg shadow hover:shadow-md cursor-pointer transition"
             >
               {/* avatar */}
