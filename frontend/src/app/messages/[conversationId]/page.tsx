@@ -6,10 +6,31 @@ import { Conversation, Message } from "../schema/chat.schema";
 import { useSocket } from "../../../../hooks/useSocket";
 import { getConversationByIdAction } from "@/lib/actions/conversation.action";
 import { getMessagesAction } from "@/lib/actions/message.action";
-import { timeStamp } from "console";
 import { getAuthToken, getUserData } from "@/lib/cookies";
 
-export default function chatRoomPage() {
+const AVATAR_COLORS = [
+  "bg-slate-200 text-slate-700",
+  "bg-stone-200 text-stone-700",
+  "bg-zinc-200 text-zinc-700",
+  "bg-neutral-200 text-neutral-700",
+];
+const avatarColor = (name: string) =>
+  AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length];
+const getInitials = (u: {
+  firstName?: string;
+  lastName?: string;
+  email: string;
+}) =>
+  ((u.firstName?.[0] || u.email[0]) + (u.lastName?.[0] || "")).toUpperCase();
+
+const StatusIcon = ({ status }: { status: string }) => {
+  if (status === "sent") return <span className="opacity-50">✓</span>;
+  if (status === "delivered") return <span className="opacity-50">✓✓</span>;
+  if (status === "read") return <span className="text-blue-300">✓✓</span>;
+  return null;
+};
+
+export default function ChatRoomPage() {
   const params = useParams();
   const router = useRouter();
   const conversationId = params.conversationId as string;
@@ -37,18 +58,12 @@ export default function chatRoomPage() {
   } = useSocket(token);
 
   useEffect(() => {
-    // Get token and user from cookies
     const loadAuth = async () => {
       const storedToken = await getAuthToken();
       const userData = await getUserData();
-
-      if (userData) {
-        setCurrentUserId(userData._id);
-      }
-
+      if (userData) setCurrentUserId(userData._id);
       setToken(storedToken || null);
     };
-
     loadAuth();
     loadConversation();
     loadMessages();
@@ -56,18 +71,13 @@ export default function chatRoomPage() {
 
   useEffect(() => {
     if (!socket) return;
-
-    // listen fro new mess
     socket.on("new_message", (message: Message) => {
       if (message.conversationId === conversationId) {
         setMessages((prev) => [...prev, message]);
         scrollToBottom();
-
         markAsRead(conversationId);
       }
     });
-
-    // listen fior message delivered
     socket.on("message_delviered", ({ messageId, conversationId: convId }) => {
       if (convId === conversationId) {
         setMessages((prev) =>
@@ -77,8 +87,6 @@ export default function chatRoomPage() {
         );
       }
     });
-
-    // Listen for messages read
     socket.on("messages_read", ({ conversationId: convId }) => {
       if (convId === conversationId) {
         setMessages((prev) =>
@@ -88,21 +96,12 @@ export default function chatRoomPage() {
         );
       }
     });
-
-    // Listen for typing
     socket.on("user_typing", ({ conversationId: convId }) => {
-      if (convId === conversationId) {
-        setIsTyping(true);
-      }
+      if (convId === conversationId) setIsTyping(true);
     });
-
-    // Listen for stop typing
     socket.on("user_stop_typing", ({ conversationId: convId }) => {
-      if (convId === conversationId) {
-        setIsTyping(false);
-      }
+      if (convId === conversationId) setIsTyping(false);
     });
-
     return () => {
       socket.off("new_message");
       socket.off("message_delivered");
@@ -118,15 +117,8 @@ export default function chatRoomPage() {
 
   const loadConversation = async () => {
     try {
-      console.log("Loading conversation:", conversationId); // ← Add this
       const result = await getConversationByIdAction(conversationId);
-      console.log("Conversation result:", result); // ← Add this
-
-      if (result.success && result.data) {
-        setConversation(result.data);
-      } else {
-        console.error("Failed to load conversation:", result.message); // ← Add this
-      }
+      if (result.success && result.data) setConversation(result.data);
     } catch (error) {
       console.error("Failed to load conversation:", error);
     }
@@ -136,108 +128,75 @@ export default function chatRoomPage() {
     try {
       setLoading(true);
       const result = await getMessagesAction(conversationId);
-
-      if (result.success && result.data) {
-        setMessages(result.data.messages);
-      }
+      if (result.success && result.data) setMessages(result.data.messages);
     } catch (error) {
-      console.error("Failed to laod messages: ", error);
+      console.error("Failed to load messages:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const scrollToBottom = () => {
+  const scrollToBottom = () =>
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!messageText.trim() || sending) return;
-
     setSending(true);
-
-    // send via socket for real-time
     if (socket && isConnected) {
       sendMessage(conversationId, messageText.trim(), (response) => {
         if (response.success && response.message) {
           setMessages((prev) => [...prev, response.message!]);
           setMessageText("");
           scrollToBottom();
-
-          if (conversation?.otherUser._id) {
+          if (conversation?.otherUser._id)
             emitStopTyping(conversationId, conversation.otherUser._id);
-          }
-        } else {
-          alert("Failed to send message: " + response.error);
-        }
+        } else alert("Failed to send message: " + response.error);
         setSending(false);
       });
     } else {
-      alert("Not conected to chat server");
+      alert("Not connected to chat server");
       setSending(false);
     }
   };
 
   const handleTyping = () => {
     if (!conversation?.otherUser._id) return;
-
-    // emit typing event
     emitTyping(conversationId, conversation.otherUser._id);
-
-    // clear previous timeout
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
-    }
-
-    // set timeout to stop typing after 2 sec
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     typingTimeoutRef.current = setTimeout(() => {
       emitStopTyping(conversationId, conversation.otherUser._id);
     }, 2000);
   };
 
-  const formatTime = (timeStamp: string) => {
-    const date = new Date(timeStamp);
-    return date.toLocaleDateString("en-US", {
+  const formatMsgTime = (timestamp: string) =>
+    new Date(timestamp).toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
-
-  const getStatusIcon = (staus: string) => {
-    switch (status) {
-      case "sent":
-        return "✓";
-      case "delivered":
-        return "✓✓";
-      case "read":
-        return "✓✓";
-      default:
-        return "";
-    }
-  };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Loading messages...</div>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-slate-50">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-200 border-t-gray-800" />
+        <p className="text-xs text-gray-400">Loading messages...</p>
       </div>
     );
   }
 
   if (!conversation) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Conversation not found</div>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <p className="text-sm text-gray-500">Conversation not found</p>
       </div>
     );
   }
 
-  const otherUser = conversation?.otherUser;
+  const otherUser = conversation.otherUser;
   if (!otherUser) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Invalid conversation data</div>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <p className="text-sm text-gray-500">Invalid conversation data</p>
       </div>
     );
   }
@@ -245,111 +204,137 @@ export default function chatRoomPage() {
   const isOnline = isUserOnline(otherUser._id);
 
   return (
-    <div className="flex flex-col h-screen max-w-4xl mx-auto">
-      <div className="bg-white border-b px-4 py-3 flex items-center gap-3">
+    <div className="flex h-screen max-w-4xl mx-auto flex-col bg-slate-50">
+      {/* Header */}
+      <div className="flex items-center gap-3 border-b border-gray-100 bg-white px-4 py-3 shadow-sm">
         <button
           onClick={() => router.push("/messages")}
-          className="text-gray-600 hover:text-gray-800"
+          className="flex h-8 w-8 items-center justify-center rounded-xl border border-gray-200 bg-gray-50 text-gray-500 transition-colors hover:bg-gray-100"
         >
-          ← Back
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="h-4 w-4"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15.75 19.5L8.25 12l7.5-7.5"
+            />
+          </svg>
         </button>
 
-        <div className="relative">
-          <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+        <div className="relative flex-shrink-0">
+          <div
+            className={`flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold ${avatarColor(otherUser.firstName || otherUser.email)}`}
+          >
             {otherUser.imageUrl ? (
               <img
-                src={otherUser.imageUrl}
+                src={
+                  otherUser.imageUrl.startsWith("http")
+                    ? otherUser.imageUrl
+                    : `http://localhost:5050${otherUser.imageUrl.startsWith("/") ? "" : "/"}${otherUser.imageUrl}`
+                }
                 alt={otherUser.firstName || "User"}
-                className="w-10 h-10 rounded-full object-cover"
+                className="h-9 w-9 rounded-full object-cover"
               />
             ) : (
-              <span className="text-lg font-semibold text-gray-600">
-                {(otherUser.firstName?.[0] || otherUser.email[0]).toUpperCase()}
-              </span>
+              getInitials(otherUser)
             )}
           </div>
           {isOnline && (
-            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+            <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-400" />
           )}
         </div>
 
-        <div>
-          <h2>
+        <div className="min-w-0 flex-1">
+          <h2 className="truncate text-sm font-semibold text-gray-800">
             {otherUser.firstName && otherUser.lastName
               ? `${otherUser.firstName} ${otherUser.lastName}`
               : otherUser.email}
           </h2>
-          <p className="text-xs text-gray-500">
+          <p
+            className={`text-xs ${isOnline ? "text-emerald-500" : "text-gray-400"}`}
+          >
             {isOnline ? "Online" : "Offline"}
           </p>
         </div>
 
-        <div
-          className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}
-        />
+        <div className="flex items-center gap-1.5 rounded-full border border-gray-100 bg-gray-50 px-2.5 py-1">
+          <span
+            className={`h-1.5 w-1.5 rounded-full ${isConnected ? "bg-emerald-400" : "bg-red-400"}`}
+          />
+        </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2">
         {messages.length === 0 ? (
-          <div className="text-center text-gray-500 mt-8">
-            No messages yet. Start the conversation!
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <p className="text-sm text-gray-400">No messages yet</p>
+            <p className="mt-1 text-xs text-gray-300">
+              Start the conversation!
+            </p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {messages.map((message) => {
-              const isSentByMe = message.senderId._id === currentUserId;
-
-              return (
-                <div
-                  key={message._id}
-                  className={`flex ${isSentByMe ? "justify-end" : "justify-start"}`}
-                >
+          messages.map((message) => {
+            const isSentByMe = message.senderId._id === currentUserId;
+            return (
+              <div
+                key={message._id}
+                className={`flex ${isSentByMe ? "justify-end" : "justify-start"}`}
+              >
+                {!isSentByMe && (
                   <div
-                    className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                      isSentByMe
-                        ? "bg-blue-500 text-white"
-                        : "bg-white text-gray-800"
-                    }`}
+                    className={`mr-2 mt-auto flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${avatarColor(otherUser.firstName || otherUser.email)}`}
                   >
-                    <p className="break-words">{message.text}</p>
-                    <div
-                      className={`flex items-center gap-1 mt-1 text-xs ${
-                        isSentByMe ? "text-blue-100" : "text-gray-500"
-                      }`}
-                    >
-                      <span>{formatTime(message.createdAt)}</span>
-                      {isSentByMe && (
-                        <span
-                          className={
-                            message.status === "read" ? "text-blue-200" : ""
-                          }
-                        >
-                          {getStatusIcon(message.status)}
-                        </span>
-                      )}
-                    </div>
+                    {getInitials(otherUser)}
+                  </div>
+                )}
+                <div
+                  className={`max-w-xs rounded-2xl px-4 py-2.5 lg:max-w-md ${
+                    isSentByMe
+                      ? "rounded-br-sm bg-gray-900 text-white"
+                      : "rounded-bl-sm border border-gray-100 bg-white text-gray-800 shadow-sm"
+                  }`}
+                >
+                  <p className="break-words text-sm leading-relaxed">
+                    {message.text}
+                  </p>
+                  <div className="mt-1 flex items-center justify-end gap-1 text-[10px] text-gray-400">
+                    <span>{formatMsgTime(message.createdAt)}</span>
+                    {isSentByMe && <StatusIcon status={message.status} />}
                   </div>
                 </div>
-              );
-            })}
-            <div ref={messagesEndRef} />
-          </div>
+              </div>
+            );
+          })
         )}
+        <div ref={messagesEndRef} />
 
-        {/* typing indicator */}
+        {/* Typing indicator */}
         {isTyping && (
-          <div className="flex justify-start mt-2">
-            <div className="bg-white px-4 py-2 rounded-lg text-gray-500 text-sm">
-              {otherUser.firstName || "User"} is typing...
+          <div className="flex items-center gap-2 mt-2">
+            <div
+              className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${avatarColor(otherUser.firstName || otherUser.email)}`}
+            >
+              {getInitials(otherUser)}
+            </div>
+            <div className="flex items-center gap-1 rounded-2xl rounded-bl-sm border border-gray-100 bg-white px-4 py-2.5 shadow-sm">
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-gray-400 [animation-delay:-0.3s]" />
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-gray-400 [animation-delay:-0.15s]" />
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-gray-400" />
             </div>
           </div>
         )}
       </div>
 
-      {/* message input */}
-      <div className="border-t bg-white p-4">
-        <form onSubmit={handleSendMessage} className="flex gap-2">
+      {/* Input */}
+      <div className="border-t border-gray-100 bg-white p-3">
+        <form onSubmit={handleSendMessage} className="flex items-center gap-2">
           <input
             type="text"
             value={messageText}
@@ -358,20 +343,37 @@ export default function chatRoomPage() {
               handleTyping();
             }}
             placeholder="Type a message..."
-            className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={sending || !isConnected}
+            className="flex-1 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-300 transition-colors focus:border-gray-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:opacity-50"
           />
           <button
             type="submit"
             disabled={!messageText.trim() || sending || !isConnected}
-            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gray-900 text-white shadow-sm transition-all hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
           >
-            {sending ? "sending..." : "send"}
+            {sending ? (
+              <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="h-4 w-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.269 20.876L5.999 12zm0 0h7.5"
+                />
+              </svg>
+            )}
           </button>
         </form>
         {!isConnected && (
-          <p className="text-xs text-red-500 mt-2">
-            Not connected to chat server. Please refresh the page.
+          <p className="mt-2 text-center text-xs text-gray-400">
+            Not connected · Please refresh
           </p>
         )}
       </div>
