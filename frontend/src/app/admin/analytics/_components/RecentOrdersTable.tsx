@@ -24,6 +24,9 @@ const AVATAR_COLORS = [
 ];
 
 function getAvatarColor(name: string) {
+  if (!name || name.length === 0) {
+    return AVATAR_COLORS[0];
+  }
   return AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length];
 }
 
@@ -97,17 +100,17 @@ export default function RecentOrdersTable({ orders }: RecentOrdersTableProps) {
                 <td className="py-3 pr-4">
                   <div className="flex items-center gap-2.5">
                     <div
-                      className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${getAvatarColor(order.userId.firstName)}`}
+                      className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${getAvatarColor(order.userId?.firstName || '')}`}
                     >
-                      {order.userId.firstName[0]}
-                      {order.userId.lastName[0]}
+                      {order.userId?.firstName?.[0] || ''}
+                      {order.userId?.lastName?.[0] || ''}
                     </div>
                     <div className="min-w-0">
                       <p className="truncate text-sm font-medium text-gray-700">
-                        {order.userId.firstName} {order.userId.lastName}
+                        {order.userId?.firstName || 'N/A'} {order.userId?.lastName || ''}
                       </p>
                       <p className="truncate text-xs text-gray-400">
-                        {order.userId.email}
+                        {order.userId?.email || 'N/A'}
                       </p>
                     </div>
                   </div>

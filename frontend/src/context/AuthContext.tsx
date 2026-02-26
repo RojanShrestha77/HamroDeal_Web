@@ -26,16 +26,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  
   const checkAuth = async () => {
     try {
-      const token = await getAuthToken();
-      const user = await getUserData();
-      setUser(user);
-      setIsAuthenticated(!!token);
+      console.log("🔐 AuthContext: Checking auth...");
+      // Check if auth_token cookie exists on client side
+      const hasCookie = document.cookie.split(';').some(cookie => 
+        cookie.trim().startsWith('auth_token=')
+      );
+      
+      console.log("🔐 AuthContext: Has cookie:", hasCookie);
+      
+      if (hasCookie) {
+        const token = await getAuthToken();
+        const userData = await getUserData();
+        console.log("🔐 AuthContext: Token exists:", !!token, "User data:", userData);
+        setUser(userData);
+        setIsAuthenticated(!!token);
+      } else {
+        console.log("🔐 AuthContext: No auth cookie found");
+        setIsAuthenticated(false);
+        setUser(null);
+      }
     } catch (err) {
+      console.error("🔐 AuthContext: Error checking auth:", err);
       setIsAuthenticated(false);
       setUser(null);
     } finally {
+      console.log("🔐 AuthContext: Setting loading to false");
       setLoading(false);
     }
   };
