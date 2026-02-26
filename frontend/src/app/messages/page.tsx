@@ -9,6 +9,8 @@ import { useSocket } from "../../../hooks/useSocket";
 import { Conversation } from "./schema/chat.schema";
 import { useRouter } from "next/navigation";
 import { getAuthToken } from "@/lib/cookies";
+import { MessageCircle, ChevronRight, PenSquare } from "lucide-react";
+import Link from "next/link";
 
 const AVATAR_COLORS = [
   "bg-slate-200 text-slate-700",
@@ -49,7 +51,6 @@ export default function MessagesPage() {
     if (otherUserId) {
       const result = await createOrGetConversationAction(otherUserId);
       if (result.success) {
-        alert("Conversation created!");
         loadConversations();
       } else alert("Error: " + result.message);
     }
@@ -85,129 +86,194 @@ export default function MessagesPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-slate-50">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-200 border-t-gray-800" />
-        <p className="text-xs text-gray-400">Loading conversations...</p>
+      <div
+        className="min-h-screen bg-white flex items-center justify-center"
+        style={{ fontFamily: "'DM Sans', sans-serif" }}
+      >
+        <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');`}</style>
+        <div className="w-7 h-7 border-2 border-gray-200 border-t-gray-800 rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-gray-100 bg-white px-5 py-4 shadow-sm">
-        <div>
-          <h1 className="text-base font-bold text-gray-800">Messages</h1>
-          {totalUnread > 0 && (
-            <p className="text-xs text-gray-400">{totalUnread} unread</p>
-          )}
-        </div>
-        <div className="flex items-center gap-1.5 rounded-full border border-gray-100 bg-gray-50 px-3 py-1.5">
-          <span
-            className={`h-1.5 w-1.5 rounded-full ${isConnected ? "bg-emerald-400" : "bg-red-400"}`}
-          />
-          <span className="text-xs font-medium text-gray-500">
-            {isConnected ? "Connected" : "Disconnected"}
-          </span>
-        </div>
-      </div>
+    <div
+      className="min-h-screen bg-white"
+      style={{ fontFamily: "'DM Sans', sans-serif" }}
+    >
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');`}</style>
 
-      {/* List */}
-      <div className="flex-1 overflow-y-auto p-3">
+      <div className="max-w-2xl mx-auto px-6 py-8">
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-1 text-[0.72rem] text-gray-400 mb-6">
+          <Link href="/" className="hover:text-black transition-colors">
+            Home
+          </Link>
+          <ChevronRight size={11} />
+          <span className="text-gray-700 font-medium">Messages</span>
+        </nav>
+
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-gray-900">Messages</h1>
+            {totalUnread > 0 && (
+              <span className="bg-black text-white text-[0.65rem] font-bold px-2 py-0.5 rounded-full">
+                {totalUnread}
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-100 rounded-full px-3 py-1.5">
+              <span
+                className={`w-1.5 h-1.5 rounded-full ${isConnected ? "bg-emerald-400" : "bg-red-400"}`}
+              />
+              <span className="text-[0.7rem] font-medium text-gray-500">
+                {isConnected ? "Online" : "Offline"}
+              </span>
+            </div>
+            <button
+              onClick={createTestConversation}
+              className="w-8 h-8 flex items-center justify-center rounded-xl bg-black text-white hover:bg-gray-800 transition-colors"
+              title="New conversation"
+            >
+              <PenSquare size={14} />
+            </button>
+          </div>
+        </div>
+
+        {/* Empty state */}
         {conversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-gray-200 bg-white shadow-sm">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="h-7 w-7 text-gray-300"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"
-                />
-              </svg>
+            <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mb-4">
+              <MessageCircle size={24} className="text-gray-400" />
             </div>
-            <p className="text-sm font-medium text-gray-500">
+            <h2 className="text-base font-bold text-gray-900 mb-1">
               No conversations yet
-            </p>
-            <p className="mt-1 text-xs text-gray-400">
-              Start a new conversation
+            </h2>
+            <p className="text-sm text-gray-400 mb-6">
+              Start a conversation with a seller or buyer.
             </p>
             <button
               onClick={createTestConversation}
-              className="mt-5 rounded-xl bg-gray-900 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-gray-700"
+              className="bg-black text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-gray-800 transition-colors"
             >
               New Conversation
             </button>
           </div>
         ) : (
-          <div className="space-y-1">
-            {conversations.map((conv) => (
-              <div
-                key={conv._id}
-                onClick={() => router.push(`/messages/${conv._id}`)}
-                className="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent bg-white p-3.5 shadow-sm transition-all hover:border-gray-200 hover:shadow-md"
-              >
-                {/* Avatar */}
-                <div className="relative flex-shrink-0">
-                  <div
-                    className={`flex h-11 w-11 items-center justify-center rounded-full text-sm font-bold ${avatarColor(conv.otherUser.firstName || conv.otherUser.email)}`}
-                  >
-                    {conv.otherUser.imageUrl ? (
-                      <img
-                        src={
-                          conv.otherUser.imageUrl.startsWith("http")
-                            ? conv.otherUser.imageUrl
-                            : `http://localhost:5050${conv.otherUser.imageUrl.startsWith("/") ? "" : "/"}${conv.otherUser.imageUrl}`
-                        }
-                        alt={conv.otherUser.firstName || "User"}
-                        className="h-11 w-11 rounded-full object-cover"
-                      />
-                    ) : (
-                      getInitials(conv.otherUser)
-                    )}
-                  </div>
-                  {isUserOnline(conv.otherUser._id) && (
-                    <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-emerald-400" />
-                  )}
-                </div>
+          <div className="flex flex-col gap-1.5">
+            {conversations.map((conv) => {
+              const name =
+                conv.otherUser.firstName && conv.otherUser.lastName
+                  ? `${conv.otherUser.firstName} ${conv.otherUser.lastName}`
+                  : conv.otherUser.email;
+              const isOnline = isUserOnline(conv.otherUser._id);
+              const hasUnread = conv.unreadCount > 0;
+              const colorClass = avatarColor(
+                conv.otherUser.firstName || conv.otherUser.email,
+              );
 
-                {/* Content */}
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between">
-                    <span
-                      className={`truncate text-sm ${conv.unreadCount > 0 ? "font-bold text-gray-900" : "font-semibold text-gray-700"}`}
+              const avatarSrc = conv.otherUser.imageUrl
+                ? conv.otherUser.imageUrl.startsWith("http")
+                  ? conv.otherUser.imageUrl
+                  : `http://localhost:5050${conv.otherUser.imageUrl.startsWith("/") ? "" : "/"}${conv.otherUser.imageUrl}`
+                : null;
+
+              return (
+                <div
+                  key={conv._id}
+                  onClick={() => router.push(`/messages/${conv._id}`)}
+                  className={`group flex items-center gap-4 p-4 rounded-2xl border cursor-pointer transition-all ${
+                    hasUnread
+                      ? "bg-gray-50 border-gray-200 hover:border-gray-300"
+                      : "bg-white border-gray-100 hover:border-gray-200 hover:bg-gray-50"
+                  }`}
+                >
+                  {/* Avatar — fixed size with overflow hidden, image fully constrained */}
+                  <div
+                    className="relative shrink-0"
+                    style={{ width: 44, height: 44 }}
+                  >
+                    <div
+                      className={`flex items-center justify-center text-sm font-bold ${colorClass}`}
+                      style={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: "50%",
+                        overflow: "hidden",
+                        flexShrink: 0,
+                      }}
                     >
-                      {conv.otherUser.firstName && conv.otherUser.lastName
-                        ? `${conv.otherUser.firstName} ${conv.otherUser.lastName}`
-                        : conv.otherUser.email}
-                    </span>
-                    {conv.lastMessage && (
-                      <span className="ml-2 flex-shrink-0 text-xs text-gray-400">
-                        {formatTime(conv.lastMessage.timestamp)}
-                      </span>
+                      {avatarSrc ? (
+                        <img
+                          src={avatarSrc}
+                          alt={name}
+                          style={{
+                            width: 44,
+                            height: 44,
+                            objectFit: "cover",
+                            borderRadius: "50%",
+                            display: "block",
+                          }}
+                        />
+                      ) : (
+                        getInitials(conv.otherUser)
+                      )}
+                    </div>
+                    {isOnline && (
+                      <span
+                        style={{
+                          position: "absolute",
+                          bottom: 0,
+                          right: 0,
+                          width: 11,
+                          height: 11,
+                          background: "#34d399",
+                          border: "2px solid white",
+                          borderRadius: "50%",
+                        }}
+                      />
                     )}
                   </div>
-                  <div className="mt-0.5 flex items-center justify-between gap-2">
-                    <p
-                      className={`truncate text-xs ${conv.unreadCount > 0 ? "text-gray-700" : "text-gray-400"}`}
-                    >
-                      {conv.lastMessage?.text || "No messages yet"}
-                    </p>
-                    {conv.unreadCount > 0 && (
-                      <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-gray-900 text-[10px] font-bold text-white">
-                        {conv.unreadCount}
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2 mb-0.5">
+                      <span
+                        className={`text-sm truncate ${hasUnread ? "font-bold text-gray-900" : "font-semibold text-gray-700"}`}
+                      >
+                        {name}
                       </span>
-                    )}
+                      {conv.lastMessage && (
+                        <span className="text-[0.68rem] text-gray-400 shrink-0">
+                          {formatTime(conv.lastMessage.timestamp)}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <p
+                        className={`text-xs truncate ${hasUnread ? "text-gray-700" : "text-gray-400"}`}
+                      >
+                        {conv.lastMessage?.text || "No messages yet"}
+                      </p>
+                      {hasUnread && (
+                        <span className="w-5 h-5 shrink-0 bg-black text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                          {conv.unreadCount}
+                        </span>
+                      )}
+                    </div>
                   </div>
+
+                  {/* Hover arrow */}
+                  <ChevronRight
+                    size={14}
+                    className="text-gray-300 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                  />
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
