@@ -8,7 +8,15 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
+import {
+  Minus,
+  Plus,
+  ShoppingBag,
+  RotateCcw,
+  Truck,
+  ShieldCheck,
+  Trash2,
+} from "lucide-react";
 
 const CartPage = () => {
   const { cart, loading, removeItem, updateQuantity, clearCart, getCartTotal } =
@@ -17,39 +25,38 @@ const CartPage = () => {
   const router = useRouter();
 
   React.useEffect(() => {
-    if (!isAuthenticated && !loading) {
-      router.push("/login");
-    }
+    if (!isAuthenticated && !loading) router.push("/login");
   }, [isAuthenticated, loading, router]);
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading cart...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="w-7 h-7 border-2 border-gray-300 border-t-gray-800 rounded-full animate-spin" />
       </div>
     );
   }
 
   if (!cart || cart.items.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-100 py-10">
-        <div className="max-w-screen-xl mx-auto px-4">
-          <div className="bg-white rounded-lg shadow p-8 text-center">
-            <ShoppingBag className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Your cart is empty</h2>
-            <p className="text-gray-600 mb-6">
-              Add some products to get started!
-            </p>
-            <Link
-              href="/"
-              className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition"
-            >
-              Continue Shopping
-            </Link>
-          </div>
+      <div
+        className="min-h-screen bg-white flex items-center justify-center"
+        style={{ fontFamily: "'DM Sans', sans-serif" }}
+      >
+        <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');`}</style>
+        <div className="text-center">
+          <ShoppingBag size={48} className="text-gray-300 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-gray-900 mb-1">
+            Your cart is empty
+          </h2>
+          <p className="text-sm text-gray-400 mb-6">
+            Add some products to get started!
+          </p>
+          <Link
+            href="/"
+            className="inline-block bg-black text-white text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-gray-800 transition-colors"
+          >
+            Continue Shopping
+          </Link>
         </div>
       </div>
     );
@@ -64,40 +71,43 @@ const CartPage = () => {
   };
 
   const handleRemoveItem = async (productId: string) => {
-    if (confirm("Remove this item from cart?")) {
-      await removeItem(productId);
-    }
+    if (confirm("Remove this item from cart?")) await removeItem(productId);
   };
 
   const handleClearCart = async () => {
-    if (confirm("Clear entire cart?")) {
-      await clearCart();
-    }
-  };
-
-  const handleProceedToCheckout = () => {
-    router.push("/checkout");
+    if (confirm("Clear entire cart?")) await clearCart();
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10">
-      <div className="max-w-screen-xl mx-auto px-4">
+    <div
+      className="min-h-screen bg-white"
+      style={{ fontFamily: "'DM Sans', sans-serif" }}
+    >
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');`}</style>
+
+      <div className="max-w-5xl mx-auto px-6 py-6">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Shopping Cart</h1>
+        <div className="flex items-center justify-between mb-5">
+          <h1 className="text-2xl font-bold text-gray-900">
+            Shopping Cart
+          </h1>
           <button
             onClick={handleClearCart}
-            className="text-red-600 hover:text-red-700 text-sm font-medium"
+            className="text-xs text-gray-400 hover:text-red-500 transition-colors"
           >
             Clear Cart
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Cart Items */}
-          <div className="lg:col-span-2 space-y-4">
+        <div className="flex gap-5 items-start overflow-x-auto">
+          {" "}
+          {/* ── LEFT: Cart Items list ── */}
+          <div
+            className="flex flex-col gap-3"
+            style={{ flex: 1, minWidth: 380 }}
+          >
+            {" "}
             {cart.items.map((item) => {
-              // ✅ Use helper functions from context
               const productId = getProductId(item.productId);
               const product = isProductPopulated(item.productId)
                 ? item.productId
@@ -106,105 +116,404 @@ const CartPage = () => {
               return (
                 <div
                   key={productId}
-                  className="bg-white rounded-lg shadow p-4 flex gap-4"
+                  style={{
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "12px",
+                    padding: "12px",
+                    display: "flex",
+                    gap: "12px",
+                    background: "#fff",
+                  }}
                 >
-                  {/* Product Image */}
-                  <div className="w-24 h-24 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                  {/* Small image ~100x100 */}
+                  <div
+                    style={{
+                      width: 100,
+                      height: 100,
+                      flexShrink: 0,
+                      borderRadius: "10px",
+                      overflow: "hidden",
+                      background: "#f9fafb",
+                      border: "1px solid #f3f4f6",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
                     {product?.images ? (
                       <img
                         src={`http://localhost:5050${product.images}`}
                         alt={product.title}
-                        className="w-full h-full object-cover"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "contain",
+                          padding: "6px",
+                        }}
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <span className="text-gray-400 text-xs">No Image</span>
-                      </div>
+                      <span style={{ color: "#d1d5db", fontSize: "10px" }}>
+                        No Image
+                      </span>
                     )}
                   </div>
 
-                  {/* Product Info */}
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-lg mb-1">
-                      {product?.title || item.title || "Product"}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-2">
-                      Rs {item.price} each
-                    </p>
+                  {/* Content area — fills remaining width */}
+                  <div
+                    style={{
+                      flex: 1,
+                      minWidth: 0,
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    {/* Top row: info + price */}
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "flex-start",
+                        gap: "12px",
+                      }}
+                    >
+                      {/* Left info */}
+                      <div>
+                        <p
+                          style={{
+                            fontWeight: 700,
+                            fontSize: "14px",
+                            color: "#111827",
+                            marginBottom: "3px",
+                            lineHeight: 1.3,
+                          }}
+                          className="line-clamp-2"
+                        >
+                          {product?.title || item.title || "Product"}
+                        </p>
+                        <p
+                          style={{
+                            fontSize: "12px",
+                            color: "#9ca3af",
+                            marginBottom: "6px",
+                          }}
+                        >
+                          Rs.{Number(item.price).toLocaleString("en-IN")} each
+                        </p>
+                        <span
+                          style={{
+                            display: "inline-block",
+                            background: "#f0fdf4",
+                            color: "#16a34a",
+                            fontSize: "10px",
+                            fontWeight: 600,
+                            padding: "2px 8px",
+                            borderRadius: "9999px",
+                            border: "1px solid #bbf7d0",
+                          }}
+                        >
+                          In Stock
+                        </span>
+                      </div>
 
-                    {/* Quantity Controls */}
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() =>
-                          handleUpdateQuantity(productId, item.quantity - 1)
-                        }
-                        disabled={item.quantity <= 1}
-                        className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                      {/* Right price */}
+                      <div style={{ textAlign: "right", flexShrink: 0 }}>
+                        <p
+                          style={{
+                            fontWeight: 700,
+                            fontSize: "14px",
+                            color: "#111827",
+                          }}
+                        >
+                          Rs.
+                          {Number(item.price * item.quantity).toLocaleString(
+                            "en-IN",
+                          )}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Bottom row: qty controls + remove */}
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        marginTop: "8px",
+                      }}
+                    >
+                      {/* Qty */}
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          border: "1px solid #e5e7eb",
+                          borderRadius: "8px",
+                          overflow: "hidden",
+                        }}
                       >
-                        <Minus className="w-4 h-4" />
-                      </button>
-                      <span className="font-medium w-8 text-center">
-                        {item.quantity}
-                      </span>
+                        <button
+                          onClick={() =>
+                            handleUpdateQuantity(productId, item.quantity - 1)
+                          }
+                          disabled={item.quantity <= 1}
+                          style={{
+                            width: 28,
+                            height: 28,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            background: "none",
+                            border: "none",
+                            borderRight: "1px solid #e5e7eb",
+                            cursor:
+                              item.quantity <= 1 ? "not-allowed" : "pointer",
+                            opacity: item.quantity <= 1 ? 0.3 : 1,
+                            color: "#374151",
+                          }}
+                        >
+                          <Minus size={12} />
+                        </button>
+                        <span
+                          style={{
+                            width: 32,
+                            textAlign: "center",
+                            fontSize: "13px",
+                            fontWeight: 600,
+                            color: "#111827",
+                            userSelect: "none",
+                          }}
+                        >
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() =>
+                            handleUpdateQuantity(productId, item.quantity + 1)
+                          }
+                          style={{
+                            width: 28,
+                            height: 28,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            background: "none",
+                            border: "none",
+                            borderLeft: "1px solid #e5e7eb",
+                            cursor: "pointer",
+                            color: "#374151",
+                          }}
+                        >
+                          <Plus size={12} />
+                        </button>
+                      </div>
+
+                      {/* Remove */}
                       <button
-                        onClick={() =>
-                          handleUpdateQuantity(productId, item.quantity + 1)
+                        onClick={() => handleRemoveItem(productId)}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
+                          fontSize: "12px",
+                          color: "#9ca3af",
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.color = "#ef4444")
                         }
-                        className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.color = "#9ca3af")
+                        }
                       >
-                        <Plus className="w-4 h-4" />
+                        <Trash2 size={13} />
+                        Remove
                       </button>
                     </div>
-                  </div>
-
-                  {/* Price and Remove */}
-                  <div className="flex flex-col items-end justify-between">
-                    <button
-                      onClick={() => handleRemoveItem(productId)}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                    <p className="font-bold text-lg">
-                      Rs {item.price * item.quantity}
-                    </p>
                   </div>
                 </div>
               );
             })}
           </div>
+          {/* ── RIGHT: Order Summary ── */}
+          <div
+            style={{ width: 260, flexShrink: 0, position: "sticky", top: 24 }}
+          >
+            <div
+              style={{
+                border: "1px solid #e5e7eb",
+                borderRadius: "12px",
+                padding: "16px",
+                background: "#fff",
+              }}
+            >
+              <h2
+                style={{
+                  fontWeight: 700,
+                  fontSize: "16px",
+                  color: "#111827",
+                  marginBottom: "16px",
+                }}
+              >
+                Order Summary
+              </h2>
 
-          {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow p-6 sticky top-24">
-              <h2 className="text-xl font-bold mb-4">Order Summary</h2>
-              <div className="space-y-3 mb-4">
-                <div className="flex justify-between text-gray-600">
-                  <span>Items ({cart.itemCount})</span>
-                  <span>Rs {getCartTotal()}</span>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                  marginBottom: "12px",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    fontSize: "13px",
+                  }}
+                >
+                  <span style={{ color: "#6b7280" }}>
+                    Items ({cart.itemCount})
+                  </span>
+                  <span style={{ fontWeight: 500, color: "#111827" }}>
+                    Rs.{Number(getCartTotal()).toLocaleString("en-IN")}
+                  </span>
                 </div>
-                <div className="flex justify-between text-gray-600">
-                  <span>Shipping</span>
-                  <span>Free</span>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    fontSize: "13px",
+                  }}
+                >
+                  <span style={{ color: "#6b7280" }}>Shipping</span>
+                  <span style={{ fontWeight: 500, color: "#111827" }}>
+                    Free
+                  </span>
                 </div>
-                <div className="border-t pt-3 flex justify-between font-bold text-lg">
-                  <span>Total</span>
-                  <span>Rs {getCartTotal()}</span>
+              </div>
+
+              <div
+                style={{
+                  borderTop: "1px solid #e5e7eb",
+                  paddingTop: "12px",
+                  marginBottom: "16px",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontWeight: 700,
+                      fontSize: "14px",
+                      color: "#111827",
+                    }}
+                  >
+                    Total
+                  </span>
+                  <span
+                    style={{
+                      fontWeight: 700,
+                      fontSize: "16px",
+                      color: "#111827",
+                    }}
+                  >
+                    Rs.{Number(getCartTotal()).toLocaleString("en-IN")}
+                  </span>
                 </div>
               </div>
 
               <button
-                onClick={handleProceedToCheckout}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition mb-3"
+                onClick={() => router.push("/checkout")}
+                style={{
+                  width: "100%",
+                  height: 40,
+                  background: "#000",
+                  color: "#fff",
+                  fontWeight: 600,
+                  fontSize: "13px",
+                  borderRadius: "10px",
+                  border: "none",
+                  cursor: "pointer",
+                  marginBottom: "6px",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = "#1f2937")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "#000")
+                }
               >
                 Proceed to Checkout
               </button>
+
+              <p
+                style={{
+                  fontSize: "11px",
+                  color: "#9ca3af",
+                  textAlign: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                Taxes calculated at checkout
+              </p>
+
               <Link
                 href="/"
-                className="block text-center text-blue-600 hover:text-blue-700 text-sm"
+                style={{
+                  display: "block",
+                  textAlign: "center",
+                  fontSize: "12px",
+                  color: "#6b7280",
+                  marginBottom: "16px",
+                  textDecoration: "none",
+                }}
               >
                 Continue Shopping
               </Link>
+
+              <div
+                style={{
+                  borderTop: "1px solid #f3f4f6",
+                  paddingTop: "12px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                }}
+              >
+                {[
+                  {
+                    icon: <Truck size={12} />,
+                    text: "Free shipping",
+                  },
+                  {
+                    icon: <RotateCcw size={12} />,
+                    text: "30-day returns",
+                  },
+                  { icon: <ShieldCheck size={12} />, text: "Secure checkout" },
+                ].map(({ icon, text }) => (
+                  <div
+                    key={text}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      fontSize: "12px",
+                      color: "#6b7280",
+                    }}
+                  >
+                    {icon}
+                    {text}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
