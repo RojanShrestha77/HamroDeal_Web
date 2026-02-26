@@ -19,10 +19,10 @@ export default function CategorySidebar({
   onSelectCategory,
 }: CategorySidebarProps) {
   return (
-    <div className="bg-white border border-[#ebebeb] rounded-[14px] overflow-hidden">
+    <div className="bg-transparent border-none rounded-[14px] overflow-hidden">
       {/* Header */}
-      <div className="px-5 py-4 border-b border-[#f0f0f0] flex items-center gap-2">
-        <Tag size={13} className="text-[#e85d26]" />
+      <div className="px-5 py-4 border-b border-[#f0f0f0] flex items-center gap-2 bg-white/50 backdrop-blur-sm rounded-t-[14px]">
+        <Tag size={13} className="text-black" />
         <span className="text-[0.72rem] font-semibold tracking-[0.12em] uppercase text-[#1a1a1a]">
           Categories
         </span>
@@ -36,8 +36,8 @@ export default function CategorySidebar({
             className={`w-full text-left px-3 py-2.5 rounded-lg border-none cursor-pointer text-sm font-normal transition-all duration-150 flex items-center justify-between
               ${
                 selectedCategory === ""
-                  ? "bg-[#e85d26] text-white font-medium"
-                  : "bg-transparent text-[#555] hover:bg-[#fef4f0] hover:text-[#e85d26]"
+                  ? "bg-black text-white font-medium"
+                  : "bg-transparent text-[#555] hover:bg-gray-100 hover:text-black"
               }`}
           >
             All Products
@@ -57,8 +57,8 @@ export default function CategorySidebar({
               className={`w-full text-left px-3 py-2.5 rounded-lg border-none cursor-pointer text-sm font-normal transition-all duration-150 flex items-center justify-between
                 ${
                   selectedCategory === category._id
-                    ? "bg-[#e85d26] text-white font-medium"
-                    : "bg-transparent text-[#555] hover:bg-[#fef4f0] hover:text-[#e85d26]"
+                    ? "bg-black text-white font-medium"
+                    : "bg-transparent text-[#555] hover:bg-gray-100 hover:text-black"
                 }`}
             >
               {category.name}

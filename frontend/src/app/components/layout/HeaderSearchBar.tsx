@@ -27,25 +27,26 @@ export default function HeaderSearchBar() {
 
   return (
     <form className="w-full" onSubmit={handleSubmit}>
-      <div className="flex items-center bg-[#f4f4f4] border-[1.5px] border-transparent rounded-[10px] px-3 transition-all duration-150 focus-within:bg-white focus-within:border-[#e85d26] focus-within:shadow-[0_0_0_3px_rgba(232,93,38,0.08)]">
+      <div className="flex items-center w-full rounded-xl border border-gray-200 bg-[#F5F5F7] px-3.5 transition-all duration-200 focus-within:bg-white focus-within:border-[#0071E3] focus-within:shadow-[0_0_0_3px_rgba(0,113,227,0.12)]">
         <Search
-          size={15}
-          className="text-[#bbb] flex-shrink-0 transition-colors duration-150 group-focus-within:text-[#e85d26]"
+          size={18}
+          className="flex-shrink-0 text-[#1D1D1F] transition-colors duration-200 ml-3 "
+          strokeWidth={2}
         />
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search products..."
-          className="flex-1 h-10 border-none bg-transparent text-sm text-[#1a1a1a] outline-none px-2 placeholder:text-[#bbb]"
+          placeholder="Search for Products, essentials..."
+          className="flex-1 h-10 border-none bg-transparent text-sm text-[#1D1D1F] outline-none px-2.5 placeholder:text-gray-400"
         />
         {query && (
           <button
             type="button"
             onClick={() => setQuery("")}
-            className="flex-shrink-0 flex items-center p-0.5 rounded bg-transparent border-none cursor-pointer text-[#bbb] hover:text-[#555] transition-colors duration-150"
+            className="flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-gray-300 hover:bg-gray-400 transition-colors duration-150"
           >
-            <X size={14} />
+            <X size={11} className="text-gray-600" />
           </button>
         )}
       </div>

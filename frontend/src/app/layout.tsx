@@ -6,6 +6,7 @@ import Header from "@/app/components/layout/Header";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishListContext";
+import CategoryNav from "./components/navigation/CategoriesNav";
 
 const poppins = Inter({ subsets: ["latin"], variable: "--font-poppins" }); // Replace with Poppins if imported
 
@@ -29,6 +30,7 @@ export default function RootLayout({
                 <WishlistProvider>
                   <div className="flex flex-col min-h-screen">
                     <Header />
+                    <CategoryNav />
                     <main>{children}</main>
                     <Footer />
                   </div>

@@ -1,19 +1,28 @@
-import HomeBanner from "./_components/HomeBanner";
 import ProductHomePage from "../products/Products";
 import Link from "next/link";
+import BannerCarousel from "./_components/BannerCarousel";
 
 const HomePage = () => {
   return (
     <div>
-      <HomeBanner />
-      <div className="text-center my-8">
+      <BannerCarousel />
+
+      {/* Featured Products Header */}
+      <div className="max-w-screen-xl mx-auto px-6 mt-10 mb-4 flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-[#111]">Featured Products</h2>
+          <p className="text-sm text-[#888] mt-1">
+            Discover our curated collection
+          </p>
+        </div>
         <Link
           href="/products"
-          className="inline-block px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          className="text-sm font-medium text-[#111] border border-[#111] px-4 py-2 hover:bg-[#111] hover:text-white transition-colors duration-200"
         >
-          Browse All Products
+          Browse All
         </Link>
       </div>
+
       <ProductHomePage />
     </div>
   );

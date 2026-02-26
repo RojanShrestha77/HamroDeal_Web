@@ -1,5 +1,6 @@
+"use client";
+
 import { getUnreadCountAction } from "@/lib/actions/notification.action";
-import { getUnreadCount } from "@/lib/api/notification";
 import { Bell } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -23,10 +24,13 @@ export default function NotificationBell() {
   };
 
   return (
-    <Link href="/notification" className="relative inline-block">
-      <Bell className="h-6 w-6 text-gray-700 hover:text-gray-900 cursor-pointer" />
+    <Link 
+      href="/notification" 
+      className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg bg-transparent hover:bg-[#F5F5F7] transition-colors duration-150"
+    >
+      <Bell size={20} className="text-[#1D1D1F]" strokeWidth={1.8} />
       {unreadCount > 0 && (
-        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+        <span className="absolute -right-1 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#FF3B30] px-1 text-[10px] font-semibold text-white">
           {unreadCount > 9 ? "9+" : unreadCount}
         </span>
       )}

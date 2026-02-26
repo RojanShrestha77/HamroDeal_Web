@@ -4,12 +4,21 @@ import Logo from "../navigation/Logo";
 import FooterTop from "./FooterTop";
 import SocialMedia from "../common/SocialMedia";
 import { SubText, SubTitle } from "../ui/text";
-import { categoriesData, quickLinksData } from "@/app/constant/data";
+import { quickLinksData } from "@/app/constant/data";
 import Link from "next/link";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { getAllCategories } from "@/lib/api/category";
 
-const Footer = () => {
+const Footer = async () => {
+  let categories = [];
+  try {
+    const response = await getAllCategories();
+    categories = response.data || [];
+  } catch (error) {
+    console.error("Failed to fetch categories:", error);
+  }
+
   return (
     <footer className="bg-white border-t border-gray-300">
       <Container>
@@ -44,16 +53,22 @@ const Footer = () => {
           <div>
             <SubTitle>Categories</SubTitle>
             <ul className="space-y-3 mt-4">
-              {categoriesData.map((item) => (
-                <li key={item.title}>
-                  <Link
-                    href={`/category/${item?.href}`}
-                    className="hover:text-shop_light_green hoverEffect text-sm"
-                  >
-                    {item?.title}
-                  </Link>
+              {categories.length > 0 ? (
+                categories.slice(0, 6).map((category: any) => (
+                  <li key={category._id}>
+                    <Link
+                      href={`/products?category=${category._id}`}
+                      className="hover:text-shop_light_green hoverEffect text-sm"
+                    >
+                      {category.name}
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <li className="text-sm text-gray-500">
+                  No categories available
                 </li>
-              ))}
+              )}
             </ul>
           </div>
           <div className="space-y-4">

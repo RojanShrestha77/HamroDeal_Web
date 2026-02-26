@@ -23,7 +23,7 @@ const AddToCartButton = ({ productId, stock }: AddToCartButtonProps) => {
   const handleAddToCart = async (e: React.MouseEvent) => {
     console.log("🖱️ HOME: Add to Cart clicked!");
     console.log("Product ID:", productId);
-    
+
     e.preventDefault(); // Prevent Link navigation
     e.stopPropagation();
 
@@ -41,10 +41,8 @@ const AddToCartButton = ({ productId, stock }: AddToCartButtonProps) => {
     console.log("📨 Result:", success);
 
     if (success) {
-      console.log("✅ Added to cart successfully!");
       alert("Added to cart!");
     } else {
-      console.log("❌ Failed to add to cart");
       alert("Failed to add to cart");
     }
   };
@@ -53,7 +51,7 @@ const AddToCartButton = ({ productId, stock }: AddToCartButtonProps) => {
     <button
       onClick={handleAddToCart}
       disabled={stock === 0 || loading}
-      className="mt-auto bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+      className="w-full h-8 rounded-[8.9px] bg-[#1a1a1a] text-white py-[11px] px-6 rounded-[8px] text-[13px] font-medium hover:bg-[#2a2a2a] transition-colors duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
     >
       {loading ? "Adding..." : stock > 0 ? "Add to Cart" : "Out of Stock"}
     </button>

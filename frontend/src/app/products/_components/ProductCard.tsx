@@ -22,64 +22,90 @@ export default function ProductCard({ product }: ProductCardProps) {
   const lowStock = inStock && product.stock <= 5;
 
   return (
-    <div className="bg-white border border-[#ebebeb] rounded-[14px] overflow-hidden flex flex-col transition-all duration-[220ms] hover:shadow-[0_12px_40px_rgba(0,0,0,0.1)] hover:-translate-y-[3px] hover:border-[#e0e0e0]">
+    <div className="group bg-white border border-gray-100 overflow-hidden flex flex-col transition-all duration-200 hover:shadow-xl hover:-translate-y-1 hover:border-gray-200">
       <Link
         href={`products/${product._id}`}
         className="flex flex-col flex-1 no-underline text-inherit"
       >
         {/* Image */}
-        <div className="relative aspect-[4/3] bg-[#f8f7f4] overflow-hidden">
+        <div className="relative aspect-[4/3] bg-[#F5F5F7] overflow-hidden">
           {product.images ? (
             <img
               src={`http://localhost:5050${product.images}`}
               alt={product.title}
-              className="w-full h-full object-cover transition-transform duration-[400ms] ease-in-out group-hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
             />
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-[#ccc]">
-              <span className="text-[2rem]">🛍️</span>
-              <span className="text-xs">No image</span>
+            <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-gray-300">
+              <span className="text-4xl">🛍️</span>
+              <span className="text-xs font-medium">No image</span>
             </div>
           )}
 
+          {/* Out of stock — top left */}
           {!inStock && (
-            <span className="absolute top-2.5 left-2.5 bg-[#1a1a1a] text-white text-[0.65rem] font-semibold tracking-[0.06em] uppercase px-2.5 py-1 rounded-full">
+            <span className="absolute top-3 left-3 bg-[#1D1D1F] text-white text-[0.6rem] font-bold tracking-widest uppercase px-2.5 py-1 rounded-full">
               Out of Stock
             </span>
           )}
-          {lowStock && (
-            <span className="absolute top-2.5 left-2.5 bg-[#fff3e8] text-[#e85d26] border border-[#fdd7c0] text-[0.65rem] font-semibold tracking-[0.06em] uppercase px-2.5 py-1 rounded-full">
-              Only {product.stock} left
-            </span>
+
+          {/* Stock badge — bottom right */}
+          {inStock && (
+            <div className="absolute bottom-3 right-3">
+              {lowStock ? (
+                <div className="flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 shadow-md ring-1 ring-red-100">
+                  <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse flex-shrink-0" />
+                  <span className="text-[0.6rem] font-bold text-red-500 uppercase tracking-wide">
+                    Only {product.stock} left
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5 rounded-full bg-black/60 backdrop-blur-sm px-2.5 py-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-white flex-shrink-0" />
+                  <span className="text-[0.6rem] font-semibold text-white uppercase tracking-wide">
+                    {product.stock} in stock
+                  </span>
+                </div>
+              )}
+            </div>
           )}
+
+          {/* Wishlist — top right, show on hover */}
+          <div
+            className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            onClick={(e) => e.preventDefault()}
+          >
+            <div className="rounded-full bg-white shadow-md ring-1 ring-gray-100 p-1.5">
+              <AddToWishlistButton productId={product._id} />
+            </div>
+          </div>
         </div>
 
         {/* Body */}
-        <div className="p-4 flex flex-col gap-1.5 flex-1">
-          <h2 className="text-[0.9rem] font-semibold text-[#1a1a1a] m-0 leading-[1.3] line-clamp-2">
+        <div className="p-4 flex flex-col gap-1 flex-1">
+          <h2 className="text-sm font-semibold text-[#1D1D1F] leading-snug line-clamp-2">
             {product.title}
           </h2>
-          <p className="text-[0.78rem] font-light text-[#999] m-0 leading-relaxed line-clamp-2">
+          <p className="text-xs text-gray-400 leading-relaxed line-clamp-2">
             {product.description}
           </p>
-          <div className="flex items-center justify-between mt-auto pt-2.5">
-            <span className="font-serif text-xl font-bold text-[#1a1a1a]">
+
+          {/* Price */}
+          <div className="mt-auto pt-3 flex items-end justify-between">
+            <span className="text-sm font-semibold text-[#1D1D1F]">
               Rs {product.price.toLocaleString()}
             </span>
-            {inStock && (
-              <span
-                className={`text-[0.7rem] ${lowStock ? "text-[#e85d26] font-medium" : "text-[#bbb]"}`}
-              >
-                {product.stock} in stock
+            {!inStock && (
+              <span className="text-xs font-medium text-gray-400">
+                Unavailable
               </span>
             )}
           </div>
         </div>
       </Link>
 
-      {/* Actions */}
-      <div className="px-4 pt-3 pb-4 flex flex-col gap-2 border-t border-[#f4f4f4]">
-        <AddToWishlistButton productId={product._id} />
+      {/* Add to cart */}
+      <div className="px-4 pb-4">
         <AddToCartButton productId={product._id} stock={product.stock} />
       </div>
     </div>

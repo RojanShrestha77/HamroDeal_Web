@@ -1,11 +1,12 @@
 "use client";
 
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import Link from "next/link";
 import { AddToCartButton } from "./_components/AddToCartButton";
 import { useAuth } from "@/context/AuthContext";
 import { use, useEffect, useState } from "react";
 import ProductReviews from "@/app/review/_component/ProductReview";
+import { createOrGetConversationAction } from "@/lib/actions/conversation.action";
 
 async function getProduct(id: string) {
   try {
@@ -25,9 +26,11 @@ export default function ProductDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const { user } = useAuth(); // Get user from AuthContext
+  const { user } = useAuth();
+  const router = useRouter();
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [messagingLoading, setMessagingLoading] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -41,6 +44,43 @@ export default function ProductDetailPage({
 
     fetchProduct();
   }, [id]);
+
+  const handleMessageSeller = async () => {
+    if (!user) {
+      alert("PLease login to message teh seller");
+      router.push("/login");
+      return;
+    }
+
+    const sellerId = product.sellerId?._id || product.sellerId;
+
+    if (!sellerId) {
+      alert("Seller information not available");
+      return;
+    }
+
+    if (sellerId === user._id) {
+      alert("You cannot message yourself");
+      return;
+    }
+
+    setMessagingLoading(true);
+
+    try {
+      const result = await createOrGetConversationAction(sellerId);
+
+      if (result.success && result.data) {
+        router.push(`/messages/${result.data._id}`);
+      } else {
+        alert("Failed to start conversation: " + result.message);
+      }
+    } catch (error) {
+      console.error("Error starting conversation:", error);
+      alert("Failed to start conversation");
+    } finally {
+      setMessagingLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -137,8 +177,12 @@ export default function ProductDetailPage({
                 stock={product.stock}
               />
 
-              <button className="w-full border-2 border-blue-600 text-blue-600 py-4 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
-                Contact Seller
+              <button
+                onClick={handleMessageSeller}
+                disabled={messagingLoading}
+                className="w-full border-2 border-blue-600 text-blue-600 py-4 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
+              >
+                {messagingLoading ? "Opening chat..." : "Message Seller"}
               </button>
             </div>
           </div>
