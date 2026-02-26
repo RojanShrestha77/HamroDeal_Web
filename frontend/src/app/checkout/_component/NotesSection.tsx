@@ -18,9 +18,9 @@ interface NotesSectionProps {
 
 export function NotesSection({ register }: NotesSectionProps) {
   return (
-    <Card>
+    <Card className="border-l-4 border-l-gray-300">
       <CardHeader>
-        <CardTitle className="text-xl">Order Notes (Optional)</CardTitle>
+        <CardTitle className="text-xl text-gray-900">Order Notes (Optional)</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">

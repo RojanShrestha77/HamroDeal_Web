@@ -28,39 +28,37 @@ export function OrderSummary({
   total,
 }: OrderSummaryProps) {
   return (
-    <Card className="sticky top-4">
+    <Card className="sticky top-4 border-gray-200">
       <CardHeader>
-        <CardTitle className="text-xl">Order Summary</CardTitle>
-        <Badge variant="secondary" className="w-fit">
+        <CardTitle className="text-xl text-gray-900">Order Summary</CardTitle>
+        <Badge variant="secondary" className="w-fit bg-gray-100 text-gray-700">
           {cart.length} {cart.length === 1 ? "item" : "items"}
         </Badge>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
           {cart.map((item, index) => {
-            const productName = item.name || item.title || "Product";
-            const productImage = item.image || "";
+            const productDetails =
+              typeof item.productId === "object"
+                ? (item.productId as any)
+                : null;
+            const productName = item.name || item.title || productDetails?.title || "Product";
+            const productImage = item.image || productDetails?.images || "";
 
             const productKey = item.productId || `item-${index}`;
 
             return (
               <div
                 key={`${getProductId(item.productId)}-${index}`}
-                className="flex gap-3 pb-3 border-b last:border-b-0"
+                className="flex gap-3 pb-3 border-b border-gray-100 last:border-b-0"
               >
                 {/* Product Image */}
                 <div className="relative w-16 h-16 flex-shrink-0 rounded-md overflow-hidden bg-gray-100">
                   {productImage ? (
-                    <Image
-                      src={productImage}
+                    <img
+                      src={`http://localhost:5050${productImage}`}
                       alt={productName}
-                      fill
-                      sizes="64px"
-                      className="object-cover"
-                      onError={(e) => {
-                        // Fallback if image fails to load
-                        e.currentTarget.style.display = "none";
-                      }}
+                      className="w-full h-full object-contain p-1"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
@@ -88,43 +86,43 @@ export function OrderSummary({
           })}
         </div>
 
-        <Separator />
+        <Separator className="bg-gray-200" />
 
         {/* Price Breakdown */}
         <div className="space-y-2">
           {/* Subtotal */}
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Subtotal</span>
-            <span className="font-medium">Rs. {subtotal.toFixed(2)}</span>
+            <span className="font-medium text-gray-900">Rs. {subtotal.toFixed(2)}</span>
           </div>
 
           {/* Shipping */}
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Shipping</span>
-            <span className="font-medium">Rs. {shippingCost.toFixed(2)}</span>
+            <span className="font-medium text-gray-900">Rs. {shippingCost.toFixed(2)}</span>
           </div>
 
           {/* Tax */}
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Tax (13%)</span>
-            <span className="font-medium">Rs. {tax.toFixed(2)}</span>
+            <span className="font-medium text-gray-900">Rs. {tax.toFixed(2)}</span>
           </div>
         </div>
 
-        <Separator />
+        <Separator className="bg-gray-200" />
 
         {/* Total */}
         <div className="flex justify-between items-center">
-          <span className="text-lg font-semibold">Total</span>
-          <span className="text-2xl font-bold text-blue-600">
+          <span className="text-lg font-semibold text-gray-900">Total</span>
+          <span className="text-2xl font-bold text-black">
             Rs. {total.toFixed(2)}
           </span>
         </div>
 
         {/* Security Badge */}
-        <div className="mt-6 p-3 bg-green-50 rounded-lg flex items-center justify-center gap-2">
-          <ShieldCheck className="w-5 h-5 text-green-600" />
-          <span className="text-sm font-medium text-green-800">
+        <div className="mt-6 p-3 bg-gray-50 rounded-lg flex items-center justify-center gap-2 border border-gray-200">
+          <ShieldCheck className="w-5 h-5 text-gray-700" />
+          <span className="text-sm font-medium text-gray-800">
             Secure Checkout
           </span>
         </div>

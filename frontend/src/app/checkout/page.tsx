@@ -1,5 +1,4 @@
 "use client";
-
 import { useCart } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -38,7 +37,6 @@ export default function CheckoutPage() {
     },
   });
 
-  // Watch all form fields to determine completion status
   const watchedFields = watch();
 
   const isShippingComplete =
@@ -49,7 +47,6 @@ export default function CheckoutPage() {
     !!watchedFields.zipCode &&
     !!watchedFields.country;
 
-  // Check if payment method is selected
   const isPaymentComplete = !!watchedFields.paymentMethod;
 
   console.log("📝 Watched Fields:", watchedFields);
@@ -89,21 +86,15 @@ export default function CheckoutPage() {
 
     console.log("✅ Cart has items - proceeding...");
     setIsSubmitting(true);
-
     try {
       const orderData = {
         items: cartItems.map((item) => {
-          // Extract productId - handle both string and object formats
           const productId =
             typeof item.productId === "string"
               ? item.productId
               : (item.productId as any)._id;
-
-          // Extract product details
           const productDetails =
             typeof item.productId === "object" ? (item.productId as any) : null;
-
-          // Extract sellerId - handle both string and object formats
           let sellerId = item.sellerId || "";
           if (productDetails && productDetails.sellerId) {
             sellerId =
@@ -111,7 +102,6 @@ export default function CheckoutPage() {
                 ? productDetails.sellerId
                 : productDetails.sellerId._id;
           }
-
           return {
             productId: productId,
             productName:
@@ -144,7 +134,6 @@ export default function CheckoutPage() {
       console.log("🌐 Calling handleCreateOrder...");
 
       const response = await handleCreateOrder(orderData);
-
       console.log("📨 Response received:", response);
 
       if (response.success) {
@@ -172,19 +161,22 @@ export default function CheckoutPage() {
     }
   };
 
-  // Empty cart state
   if (!cart || !hasItems) {
     console.log("⚠️ Empty cart - showing empty state");
     return (
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-md mx-auto text-center">
           <ShoppingBag className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-          <h1 className="text-2xl font-bold mb-2">Your cart is empty</h1>
-          <p className="text-gray-600 mb-6">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Your cart is empty
+          </h1>
+          <p className="text-gray-500 mb-6">
             Add some items to your cart to proceed with checkout
           </p>
           <Link href="/">
-            <Button>Continue Shopping</Button>
+            <Button className="bg-black hover:bg-gray-800 text-white">
+              Continue Shopping
+            </Button>
           </Link>
         </div>
       </div>
@@ -192,12 +184,10 @@ export default function CheckoutPage() {
   }
 
   console.log("✅ Rendering checkout form");
-
   return (
     <div className="container mx-auto px-4 py-8">
       <ProgressSteps steps={steps} />
-
-      <h1 className="text-3xl font-bold mb-6">Checkout</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-6">Checkout</h1>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -225,7 +215,7 @@ export default function CheckoutPage() {
               disabled={
                 isSubmitting || !isShippingComplete || !isPaymentComplete
               }
-              className="w-full h-12 text-lg"
+              className="w-full h-12 text-lg bg-black hover:bg-gray-800 text-white"
               size="lg"
               onClick={() => console.log("🖱️ Button clicked!")}
             >
@@ -242,18 +232,18 @@ export default function CheckoutPage() {
             {/* Terms and Conditions */}
             <p className="text-xs text-center text-gray-500">
               By placing an order, you agree to our{" "}
-              <Link href="/terms" className="text-blue-600 hover:underline">
+              <Link href="/terms" className="text-black hover:underline">
                 Terms & Conditions
               </Link>{" "}
               and{" "}
-              <Link href="/privacy" className="text-blue-600 hover:underline">
+              <Link href="/privacy" className="text-black hover:underline">
                 Privacy Policy
               </Link>
             </p>
           </form>
         </div>
 
-        {/* Right Side - Order Summary (1/3 width on large screens) */}
+        {/* Right Side - Order Summary */}
         <div className="lg:col-span-1">
           <OrderSummary
             cart={cartItems}

@@ -24,7 +24,7 @@ export function ProgressSteps({ steps }: ProgressStepsProps) {
               <div
                 className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
                   step.completed
-                    ? "bg-green-500 text-white"
+                    ? "bg-black text-white"
                     : "bg-gray-200 text-gray-600"
                 }`}
               >
@@ -41,7 +41,7 @@ export function ProgressSteps({ steps }: ProgressStepsProps) {
 
             {/* Connector Line (don't show after last step) */}
             {index < steps.length - 1 && (
-              <div className="w-12 md:w-20 h-1 bg-gray-300 mx-2"></div>
+              <div className={`w-12 md:w-20 h-1 mx-2 ${step.completed ? "bg-black" : "bg-gray-300"}`}></div>
             )}
           </div>
         ))}

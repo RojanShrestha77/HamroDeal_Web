@@ -47,10 +47,10 @@ export function PaymentSection({
   ];
 
   return (
-    <Card className="border-l-4 border-l-blue-500">
+    <Card className="border-l-4 border-l-gray-300">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xl">2. Payment Method</CardTitle>
+          <CardTitle className="text-xl text-gray-900">2. Payment Method</CardTitle>
           {isCompleted && <CheckCircle2 className="text-green-500 w-6 h-6" />}
         </div>
       </CardHeader>
@@ -62,9 +62,9 @@ export function PaymentSection({
               return (
                 <label
                   key={method.value}
-                  className={`flex items-start p-4 border rounded-lg cursor-pointer transition-all hover:bg-accent ${
+                  className={`flex items-start p-4 border rounded-lg cursor-pointer transition-all hover:bg-gray-50 ${
                     selectedMethod === method.value
-                      ? "border-blue-500 bg-blue-50"
+                      ? "border-black bg-gray-50"
                       : "border-gray-200"
                   }`}
                 >
@@ -73,7 +73,7 @@ export function PaymentSection({
                       type="radio"
                       {...register("paymentMethod")}
                       value={method.value}
-                      className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                      className="w-4 h-4 text-black border-gray-300 focus:ring-black"
                     />
                   </div>
                   <div className="ml-3 flex items-start flex-1">

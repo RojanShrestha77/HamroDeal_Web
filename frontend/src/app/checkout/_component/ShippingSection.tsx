@@ -25,10 +25,10 @@ export function ShippingSection({
   isCompleted,
 }: ShippingSectionProps) {
   return (
-    <Card className="border-l-4 border-l-blue-500">
+    <Card className="border-l-4 border-l-gray-300">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xl">1. Shipping Information</CardTitle>
+          <CardTitle className="text-xl text-gray-900">1. Shipping Information</CardTitle>
           {isCompleted && <CheckCircle2 className="text-green-500 w-6 h-6" />}
         </div>
       </CardHeader>
