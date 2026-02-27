@@ -66,6 +66,8 @@ export const API = {
         DELETE: (id: string) => `/api/products/${id}`,
         BY_CATEGORY: '/api/products/category',
         SEARCH: '/api/products/search',
+        NEWEST: '/api/products/newest',
+        TRENDING: '/api/products/trending',
     },
     CATEGORIES: {
         GET_ALL: '/api/categories',
