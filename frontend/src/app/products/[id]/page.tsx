@@ -135,17 +135,17 @@ export default function ProductDetailPage({
       <div className="max-w-5xl mx-auto px-6 py-5">
         <div className="flex flex-col md:flex-row gap-10">
           {/* ── LEFT: Image + thumbnails ── */}
-          <div className="md:w-[48%] flex gap-3">
+          <div className="md:w-[48%] flex flex-col gap-3">
             {/* Main image — fixed height container with object-contain */}
             <div
-              className="flex-1 rounded-2xl overflow-hidden bg-[#f5f5f3]"
+              className="w-full rounded-2xl overflow-hidden bg-[#f5f5f3] flex items-center justify-center"
               style={{ height: 480 }}
             >
               {activeImage ? (
                 <img
                   src={`http://localhost:5050${activeImage}`}
                   alt={product.title}
-                  className="w-full h-full object-contain p-6"
+                  className="max-w-full max-h-full object-contain p-6"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
@@ -154,23 +154,23 @@ export default function ProductDetailPage({
               )}
             </div>
 
-            {/* Thumbnails */}
+            {/* Thumbnails - Horizontal */}
             {images.length > 1 && (
-              <div className="flex flex-col gap-2 w-[64px] shrink-0">
+              <div className="flex gap-2 overflow-x-auto pb-2">
                 {images.map((img, i) => (
                   <button
                     key={i}
                     onClick={() => setSelectedImage(i)}
-                    className={`w-full aspect-square rounded-xl overflow-hidden border-2 transition-all bg-[#f5f5f3] ${
+                    className={`flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all bg-[#f5f5f3] flex items-center justify-center ${
                       selectedImage === i
-                        ? "border-black"
+                        ? "border-black ring-2 ring-black ring-offset-2"
                         : "border-transparent hover:border-gray-200"
                     }`}
                   >
                     <img
                       src={`http://localhost:5050${img}`}
                       alt=""
-                      className="w-full h-full object-contain p-1"
+                      className="max-w-full max-h-full object-contain p-1"
                     />
                   </button>
                 ))}
@@ -296,7 +296,7 @@ export default function ProductDetailPage({
                     productId={product._id}
                     productName={product.title}
                     productPrice={product.price}
-                    productImage={product.images}
+                    productImage={images[0] || ""}
                     sellerId={product.sellerId?._id || product.sellerId}
                     stock={product.stock}
                     quantity={quantity}

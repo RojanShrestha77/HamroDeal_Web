@@ -10,7 +10,7 @@ type Product = {
   description: string;
   price: number;
   stock: number;
-  images?: string;
+  images?: string | string[];
   categoryId: {
     _id: string;
     name: string;
@@ -101,25 +101,31 @@ export default function ProductsTable({
           </tr>
         </thead>
         <tbody>
-          {products.map((product) => (
-            <tr
-              key={product._id}
-              onClick={() => handleRowClick(product._id)}
-              className="hover:bg-gray-50 cursor-pointer transition-colors"
-            >
-              <td className="px-6 py-4">
-                {product.images ? (
-                  <img
-                    src={`http://localhost:5050${product.images}`}
-                    alt={product.title}
-                    className="w-16 h-16 object-cover rounded"
-                  />
-                ) : (
-                  <div className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
-                    No Image
-                  </div>
-                )}
-              </td>
+          {products.map((product) => {
+            // Get first image from array or use single image
+            const firstImage = Array.isArray(product.images)
+              ? product.images[0]
+              : product.images;
+
+            return (
+              <tr
+                key={product._id}
+                onClick={() => handleRowClick(product._id)}
+                className="hover:bg-gray-50 cursor-pointer transition-colors"
+              >
+                <td className="px-6 py-4">
+                  {firstImage ? (
+                    <img
+                      src={`http://localhost:5050${firstImage}`}
+                      alt={product.title}
+                      className="w-16 h-16 object-cover rounded"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
+                      No Image
+                    </div>
+                  )}
+                </td>
               <td className="px-6 py-4">
                 <div className="text-sm font-medium text-gray-900">
                   {product.title}
@@ -153,7 +159,8 @@ export default function ProductsTable({
                 </button>
               </td>
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
     </div>

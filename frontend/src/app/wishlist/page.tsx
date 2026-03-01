@@ -9,16 +9,21 @@ import {
   ArrowRight,
   Home,
   Loader2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 
 const FavouritePage = () => {
   const { wishlist, loading, removeItem, clearWishlist } = useWishlist();
   const { addToCart } = useCart();
   const { isAuthenticated } = useAuth();
   const router = useRouter();
+  
+  // Track current image index for each product
+  const [imageIndices, setImageIndices] = useState<{ [key: string]: number }>({});
 
   // redirect to the login if not logged in
   React.useEffect(() => {
@@ -131,11 +136,38 @@ const FavouritePage = () => {
                 : item.productId._id;
 
             const isOutOfStock = !product?.stock || product.stock === 0;
+            
+            // Convert images to array
+            const images = Array.isArray(product?.images)
+              ? product.images
+              : product?.images
+                ? [product.images]
+                : [];
+            
+            const currentImageIndex = imageIndices[productId] || 0;
+            
+            const goToPrevious = (e: React.MouseEvent) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setImageIndices(prev => ({
+                ...prev,
+                [productId]: currentImageIndex === 0 ? images.length - 1 : currentImageIndex - 1
+              }));
+            };
+            
+            const goToNext = (e: React.MouseEvent) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setImageIndices(prev => ({
+                ...prev,
+                [productId]: currentImageIndex === images.length - 1 ? 0 : currentImageIndex + 1
+              }));
+            };
 
             return (
               <div
                 key={productId}
-                className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200 flex flex-col"
+                className="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200 flex flex-col"
               >
                 {/* Product Image */}
                 <div className="relative aspect-square bg-gray-50">
@@ -143,12 +175,57 @@ const FavouritePage = () => {
                     href={`/products/${productId}`}
                     className="block h-full"
                   >
-                    {product?.images ? (
-                      <img
-                        src={`http://localhost:5050${product.images}`}
-                        alt={product.title}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      />
+                    {images.length > 0 ? (
+                      <>
+                        <img
+                          src={`http://localhost:5050${images[currentImageIndex]}`}
+                          alt={product.title}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        />
+                        
+                        {/* Navigation Arrows - Show only if multiple images */}
+                        {images.length > 1 && (
+                          <>
+                            {/* Left Arrow */}
+                            <button
+                              onClick={goToPrevious}
+                              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white hover:bg-black text-black hover:text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg transition-all z-10 opacity-0 group-hover:opacity-100"
+                            >
+                              <ChevronLeft className="h-5 w-5" />
+                            </button>
+                            
+                            {/* Right Arrow */}
+                            <button
+                              onClick={goToNext}
+                              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white hover:bg-black text-black hover:text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg transition-all z-10 opacity-0 group-hover:opacity-100"
+                            >
+                              <ChevronRight className="h-5 w-5" />
+                            </button>
+
+                            {/* Dots Indicator */}
+                            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                              {images.map((_, index) => (
+                                <button
+                                  key={index}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setImageIndices(prev => ({
+                                      ...prev,
+                                      [productId]: index
+                                    }));
+                                  }}
+                                  className={`w-1.5 h-1.5 rounded-full transition-all ${
+                                    currentImageIndex === index
+                                      ? "bg-black w-4"
+                                      : "bg-gray-300 hover:bg-gray-400"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </>
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <span className="text-gray-400 text-sm">No Image</span>
@@ -159,7 +236,7 @@ const FavouritePage = () => {
                   {/* Remove Button */}
                   <button
                     onClick={() => handleRemoveItem(productId)}
-                    className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-sm hover:bg-white hover:shadow transition-all duration-200"
+                    className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-sm hover:bg-white hover:shadow transition-all duration-200 z-20"
                     aria-label="Remove from wishlist"
                   >
                     <Trash2 className="w-4 h-4 text-gray-600 hover:text-red-600" />

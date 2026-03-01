@@ -8,7 +8,7 @@ import { getAllCategories } from "@/lib/api/category";
 import { toast } from "react-toastify";
 import { handleUpdateProduct } from "@/lib/actions/seller/product.action";
 import { Controller, useForm } from "react-hook-form";
-import { X } from "lucide-react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 type Category = {
   _id: string;
@@ -22,7 +22,7 @@ type Product = {
   description: string;
   price: number;
   stock: number;
-  images?: string;
+  images?: string | string[];
   categoryId: string | { _id: string; name: string };
 };
 
@@ -32,9 +32,18 @@ export default function EditProductForm({ product }: { product: Product }) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(
-    product.images ? `http://localhost:5050${product.images}` : null,
+  
+  // Convert existing images to array
+  const existingImages = Array.isArray(product.images)
+    ? product.images
+    : product.images
+      ? [product.images]
+      : [];
+  
+  const [imagePreviews, setImagePreviews] = useState<string[]>(
+    existingImages.map((img) => `http://localhost:5050${img}`)
   );
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageChanged, setImageChanged] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -76,54 +85,88 @@ export default function EditProductForm({ product }: { product: Product }) {
     fetchCategories();
   }, []);
 
-  const handleImageChange = (
-    file: File | null,
-    onChange: (file?: File) => void,
+  const handleImagesChange = (
+    files: FileList | null,
+    onChange: (files: File[]) => void,
+    currentFiles: File[]
   ) => {
-    if (file) {
-      if (imagePreview && imageChanged) {
-        URL.revokeObjectURL(imagePreview);
+    if (files) {
+      const newFiles = Array.from(files);
+      const combinedFiles = [...currentFiles, ...newFiles].slice(0, 5);
+
+      const newPreviews = combinedFiles.map((file) =>
+        URL.createObjectURL(file)
+      );
+
+      // Revoke old object URLs (only for newly created ones)
+      if (imageChanged) {
+        imagePreviews.forEach((preview) => {
+          if (preview.startsWith("blob:")) {
+            URL.revokeObjectURL(preview);
+          }
+        });
       }
-      const preview = URL.createObjectURL(file);
-      setImagePreview(preview);
+
+      setImagePreviews(newPreviews);
+      setCurrentImageIndex(0);
       setImageChanged(true);
-      onChange(file);
-    } else {
-      if (imagePreview && imageChanged) {
-        URL.revokeObjectURL(imagePreview);
-      }
-      setImagePreview(null);
-      onChange(undefined);
+      onChange(combinedFiles);
     }
   };
 
-  const handleRemoveImage = (onChange: (file?: File) => void) => {
-    if (imagePreview && imageChanged) {
-      URL.revokeObjectURL(imagePreview);
+  const handleRemoveImage = (
+    index: number,
+    onChange: (files: File[]) => void,
+    currentFiles: File[]
+  ) => {
+    const newFiles = currentFiles.filter((_, i) => i !== index);
+    const newPreviews = imagePreviews.filter((_, i) => i !== index);
+
+    // Revoke the removed preview if it's a blob URL
+    if (imagePreviews[index].startsWith("blob:")) {
+      URL.revokeObjectURL(imagePreviews[index]);
     }
-    setImagePreview(null);
+
+    setImagePreviews(newPreviews);
+
+    if (currentImageIndex >= newPreviews.length && newPreviews.length > 0) {
+      setCurrentImageIndex(newPreviews.length - 1);
+    } else if (newPreviews.length === 0) {
+      setCurrentImageIndex(0);
+    }
+
     setImageChanged(true);
-    onChange(undefined);
+    onChange(newFiles);
+
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
+  const goToPrevious = () => {
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? imagePreviews.length - 1 : prev - 1
+    );
+  };
+
+  const goToNext = () => {
+    setCurrentImageIndex((prev) =>
+      prev === imagePreviews.length - 1 ? 0 : prev + 1
+    );
+  };
+
   useEffect(() => {
     return () => {
-      if (imagePreview && imageChanged) {
-        URL.revokeObjectURL(imagePreview);
-      }
+      // Only revoke blob URLs, not server URLs
+      imagePreviews.forEach((preview) => {
+        if (preview.startsWith("blob:")) {
+          URL.revokeObjectURL(preview);
+        }
+      });
     };
-  }, [imagePreview, imageChanged]);
+  }, [imagePreviews]);
 
   const onSubmit = async (data: ProductData) => {
-    alert("Form submitted!"); // ← Add this first line
-    console.log("==================");
-    console.log("TEST LOG - CAN YOU SEE THIS?");
-    console.log("Data:", data);
-    console.log("==================");
-
     setError(null);
     startTransition(async () => {
       try {
@@ -134,25 +177,22 @@ export default function EditProductForm({ product }: { product: Product }) {
         formData.append("stock", String(data.stock));
         formData.append("categoryId", data.categoryId);
 
-        // Only append image if it was changed
+        // Only append images if they were changed
         if (imageChanged && data.images) {
-          formData.append("images", data.images);
+          data.images.forEach((image) => {
+            formData.append("images", image);
+          });
         }
-        console.log("🟡 ABOUT TO CALL handleUpdateProduct"); // ← Add this
 
         const response = await handleUpdateProduct(product._id, formData);
 
-        console.log("Product ID:", product._id); // ← Add this
         if (!response.success) {
           throw new Error(response.message || "Failed to update product");
         }
-        console.log("🟡 RESPONSE FROM handleUpdateProduct:", response); // ← Add this
 
         toast.success("Product updated successfully");
         router.push("/seller/products");
       } catch (error: Error | any) {
-        console.error("🔴 ERROR in onSubmit:", error); // ← Add this
-
         toast.error(error.message || "Failed to update product");
         setError(error.message || "Failed to update product");
       }
@@ -164,77 +204,137 @@ export default function EditProductForm({ product }: { product: Product }) {
       <h2 className="text-2xl font-bold text-neutral-900 mb-6">Edit Product</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Product Image */}
+        {/* Product Images */}
         <div className="space-y-2">
           <label className="block text-sm font-medium text-neutral-900">
-            Product Image
+            Product Images ({imagePreviews.length}/5){" "}
+            <span className="text-red-500">*</span>
           </label>
 
-          {imagePreview && (
-            <div className="relative w-full max-w-sm mb-4">
-              <img
-                src={imagePreview}
-                alt="Product preview"
-                className="w-full h-48 object-cover rounded-lg border border-neutral-200"
-              />
-              <Controller
-                name="images"
-                control={control}
-                render={({ field: { onChange } }) => (
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveImage(onChange)}
-                    className="absolute -top-2 -right-2 bg-neutral-900 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-neutral-800 transition-colors shadow-sm"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
+          {/* Image Carousel */}
+          {imagePreviews.length > 0 && (
+            <div className="relative w-full mb-4">
+              {/* Main Image Display */}
+              <div className="relative w-full h-96 bg-neutral-100 rounded-lg overflow-hidden">
+                <img
+                  src={imagePreviews[currentImageIndex]}
+                  alt={`Product preview ${currentImageIndex + 1}`}
+                  className="w-full h-full object-contain"
+                />
+
+                {/* Remove Current Image Button */}
+                <Controller
+                  name="images"
+                  control={control}
+                  render={({ field: { onChange, value } }) => (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleRemoveImage(currentImageIndex, onChange, value)
+                      }
+                      className="absolute top-4 right-4 bg-red-500 text-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-red-600 transition-colors shadow-lg"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  )}
+                />
+
+                {/* Navigation Arrows */}
+                {imagePreviews.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={goToPrevious}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-neutral-900 rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition-all"
+                    >
+                      <ChevronLeft className="h-6 w-6" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={goToNext}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-neutral-900 rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition-all"
+                    >
+                      <ChevronRight className="h-6 w-6" />
+                    </button>
+                  </>
                 )}
-              />
+
+                {/* Image Counter */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+                  {currentImageIndex + 1} / {imagePreviews.length}
+                </div>
+              </div>
+
+              {/* Thumbnail Strip */}
+              {imagePreviews.length > 1 && (
+                <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
+                  {imagePreviews.map((preview, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                        currentImageIndex === index
+                          ? "border-neutral-900 ring-2 ring-neutral-900 ring-offset-2"
+                          : "border-neutral-300 hover:border-neutral-400"
+                      }`}
+                    >
+                      <img
+                        src={preview}
+                        alt={`Thumbnail ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
+          {/* File Input */}
           <Controller
             name="images"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <div className="border-2 border-dashed border-neutral-300 rounded-lg p-6 text-center hover:border-neutral-400 hover:bg-neutral-50 transition-all">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0] || null;
-                    handleImageChange(file, onChange);
-                  }}
-                  accept="image/jpeg,image/jpg,image/png,image/webp"
-                  className="hidden"
-                  id="file-upload"
-                />
-                <label htmlFor="file-upload" className="cursor-pointer block">
-                  <svg
-                    className="mx-auto h-12 w-12 text-neutral-400"
-                    stroke="currentColor"
-                    fill="none"
-                    viewBox="0 0 48 48"
-                  >
-                    <path
-                      d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+              <div>
+                {(value?.length || 0) < 5 && (
+                  <div className="border-2 border-dashed border-neutral-300 rounded-lg p-6 text-center hover:border-neutral-400 hover:bg-neutral-50 transition-all">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      multiple
+                      onChange={(e) => {
+                        handleImagesChange(e.target.files, onChange, value || []);
+                      }}
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      className="hidden"
+                      id="file-upload"
                     />
-                  </svg>
-                  <p className="mt-3 text-sm font-medium text-neutral-900">
-                    Click to change image
-                  </p>
-                  <p className="mt-1 text-xs text-neutral-500">
-                    PNG, JPG, WEBP up to 5MB
-                  </p>
-                  {value && (
-                    <p className="mt-2 text-xs text-green-600">
-                      ✓ New file selected: {value.name}
-                    </p>
-                  )}
-                </label>
+                    <label htmlFor="file-upload" className="cursor-pointer block">
+                      <svg
+                        className="mx-auto h-12 w-12 text-neutral-400"
+                        stroke="currentColor"
+                        fill="none"
+                        viewBox="0 0 48 48"
+                      >
+                        <path
+                          d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                          strokeWidth={2}
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      <p className="mt-3 text-sm font-medium text-neutral-900">
+                        {(value?.length || 0) === 0
+                          ? "Click to upload images"
+                          : `Add more images (${value?.length || 0}/5)`}
+                      </p>
+                      <p className="mt-1 text-xs text-neutral-500">
+                        PNG, JPG, WEBP up to 5MB each
+                      </p>
+                    </label>
+                  </div>
+                )}
               </div>
             )}
           />
