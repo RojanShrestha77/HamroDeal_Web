@@ -142,7 +142,11 @@ const CartPage = () => {
                   >
                     {product?.images ? (
                       <img
-                        src={`http://localhost:5050${product.images}`}
+                        src={`http://localhost:5050${
+                          Array.isArray(product.images)
+                            ? product.images[0]
+                            : product.images
+                        }`}
                         alt={product.title}
                         style={{
                           width: "100%",

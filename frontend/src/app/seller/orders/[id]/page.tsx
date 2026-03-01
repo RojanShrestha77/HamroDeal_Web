@@ -253,7 +253,11 @@ export default function SellerOrderDetailPage({
                       <div className="flex-shrink-0 w-16 h-16 rounded-md overflow-hidden bg-gray-100 border border-gray-200">
                         {item.productImage ? (
                           <img
-                            src={`http://localhost:5050${item.productImage}`}
+                            src={`http://localhost:5050${
+                              Array.isArray(item.productImage)
+                                ? item.productImage[0]
+                                : item.productImage
+                            }`}
                             alt={item.productName}
                             className="w-full h-full object-cover"
                           />

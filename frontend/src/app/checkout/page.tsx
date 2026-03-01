@@ -102,11 +102,18 @@ export default function CheckoutPage() {
                 ? productDetails.sellerId
                 : productDetails.sellerId._id;
           }
+          
+          // Get first image if it's an array
+          const productImageRaw = item.image || productDetails?.images || "";
+          const productImage = Array.isArray(productImageRaw)
+            ? productImageRaw[0]
+            : productImageRaw;
+          
           return {
             productId: productId,
             productName:
               item.name || item.title || productDetails?.title || "Product",
-            productImage: item.image || productDetails?.images || "",
+            productImage: productImage,
             quantity: item.quantity,
             price: item.price,
             sellerId: sellerId,
