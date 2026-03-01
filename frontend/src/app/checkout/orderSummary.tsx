@@ -43,7 +43,12 @@ export function OrderSummary({
                 ? (item.productId as any)
                 : null;
             const productName = item.name || item.title || productDetails?.title || "Product";
-            const productImage = item.image || productDetails?.images || "";
+            const productImageRaw = item.image || productDetails?.images || "";
+            
+            // Get first image if it's an array
+            const productImage = Array.isArray(productImageRaw)
+              ? productImageRaw[0]
+              : productImageRaw;
 
             const productKey = item.productId || `item-${index}`;
 
