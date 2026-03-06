@@ -34,7 +34,32 @@ export default function AuthSection() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <button
+        onClick={() => window.location.href = '/login'}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '6px',
+          padding: '8px 16px',
+          fontSize: '14px',
+          fontWeight: '500',
+          color: 'white',
+          backgroundColor: '#0071E3',
+          borderRadius: '8px',
+          border: 'none',
+          cursor: 'pointer',
+          whiteSpace: 'nowrap',
+          zIndex: 50,
+          position: 'relative',
+          flexShrink: 0
+        }}
+      >
+        Sign In
+      </button>
+    );
+  }
 
   return (
     <div className="relative" ref={dropdownRef}>

@@ -180,7 +180,7 @@ const FavouritePage = () => {
                         <img
                           src={`http://localhost:5050${images[currentImageIndex]}`}
                           alt={product.title}
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
                         />
                         
                         {/* Navigation Arrows - Show only if multiple images */}

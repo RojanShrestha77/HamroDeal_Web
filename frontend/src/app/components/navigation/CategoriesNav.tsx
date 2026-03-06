@@ -34,9 +34,9 @@ export default function CategoryNav() {
   };
 
   return (
-    <nav className="bg-white border-b border-[#F5F5F7]">
+    <nav className="bg-white" style={{ borderBottom: "0.5px solid #4A4A4A" }}>
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="flex items-center  h-12 overflow-x-auto scrollbar-hide">
+        <div className="flex items-center h-12 overflow-x-auto scrollbar-hide">
           {/* All Products Link */}
           <Link
             href="/products"
@@ -57,6 +57,16 @@ export default function CategoryNav() {
           ))}
         </div>
       </div>
+
+      <style>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </nav>
   );
 }

@@ -51,13 +51,13 @@ export default function ProductCard({ product }: ProductCardProps) {
         className="flex flex-col flex-1 no-underline text-inherit"
       >
         {/* Image */}
-        <div className="relative aspect-[4/3] bg-[#F5F5F7] overflow-hidden">
+        <div className="relative aspect-[4/3] min-h-[300px] bg-[#F5F5F7] overflow-hidden">
           {images.length > 0 ? (
             <>
               <img
                 src={`http://localhost:5050${images[currentImageIndex]}`}
                 alt={product.title}
-                className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
+                className="w-full h-full object-contain transition-transform duration-500 ease-in-out group-hover:scale-105"
               />
 
               {/* Navigation Arrows - Show only if multiple images */}
@@ -70,7 +70,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
-                  
+
                   {/* Right Arrow - Always show, cycles to first image */}
                   <button
                     onClick={goToNext}
